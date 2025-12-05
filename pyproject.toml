@@ -1,0 +1,17 @@
+[project]
+name = "cash-register"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "django>=6.0",
+    "django-cotton>=2.5.0",
+    "django-htmx>=1.27.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.1",
+    "ruff>=0.14.8",
+]
