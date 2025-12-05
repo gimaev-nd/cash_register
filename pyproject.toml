@@ -12,6 +12,13 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "django-stubs>=5.2.8",
     "pytest>=9.0.1",
+    "pytest-django>=4.11.1",
     "ruff>=0.14.8",
 ]
+
+
+[tool.pytest]
+pythonpath = ["./src"]
+DJANGO_SETTINGS_MODULE = "config.settings"
