@@ -1,13 +1,8 @@
-from pyexpat import model
-from tkinter import N
-from turtle import mode
-from typing import Any, TypedDict, cast
+from typing import cast
 
 from django.db import models
 
-
-class GameDataV1(TypedDict):
-    pass
+from cash_register.types import GameDataV1
 
 
 def parse(game):  # pyright: ignore[reportMissingParameterType, reportUnknownParameterType]
@@ -15,15 +10,15 @@ def parse(game):  # pyright: ignore[reportMissingParameterType, reportUnknownPar
 
 
 class Game(models.Model):
-    gamer = models.ForeignKey(
-        "users.Gamer", models.CASCADE, "games", verbose_name="Игрок"
+    gamer = models.OneToOneField(
+        "users.Gamer", models.CASCADE, related_name="game", verbose_name="Игрок"
     )
-    game = models.JSONField("Данные игры")
+    data = models.JSONField("Данные игры")
     version = models.IntegerField("Версия схемы сотояния игры")
 
     def get_game_data(self) -> GameDataV1:
         self.update_version()
-        return parse(self.game)  # pyright: ignore[reportAny]
+        return parse(self.data)  # pyright: ignore[reportAny]
 
     def update_version(self) -> None:
         pass

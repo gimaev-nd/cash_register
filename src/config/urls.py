@@ -18,6 +18,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from cash_register import views as cash_register_views
+
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", cash_register_views.Meet.as_view(), name="meet"),
+    path("game/", cash_register_views.Game.as_view(), name="game"),
 ]
