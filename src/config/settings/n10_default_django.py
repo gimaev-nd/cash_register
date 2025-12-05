@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-@ejb_9^q32w4mdeucp@2ueim=ogdi&vg3a(3@_mc+vuzzo@uhx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS: list[str] = []
 
 
 # Application definition
@@ -51,7 +51,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "config.urls"
 
-TEMPLATES = [
+TEMPLATES = [  # pyright: ignore[reportUnknownVariableType]
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [],
