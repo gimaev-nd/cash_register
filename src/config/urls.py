@@ -23,5 +23,6 @@ from cash_register import views as cash_register_views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", cash_register_views.Meet.as_view(), name="meet"),
-    path("game/", cash_register_views.Game.as_view(), name="game"),
+    path("game/", cash_register_views.GameView.as_view(), name="game"),
+    path("scan/", cash_register_views.scan_products, name="scan"),
 ]

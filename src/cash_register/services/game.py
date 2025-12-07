@@ -1,7 +1,15 @@
 from typing import cast
 
 from cash_register.models import Game
-from cash_register.types import BanknoteCount, GameDataV1, GameState, Nominal
+from cash_register.services.products import all_products
+from cash_register.types import (
+    BanknoteCount,
+    Cart,
+    CartItem,
+    GameDataV1,
+    GameState,
+    Nominal,
+)
 from users.models import Gamer
 from users.services.gamer import get_gamer
 
@@ -24,12 +32,22 @@ def get_game_by_gamer_name(name: str) -> Game:
 
 def init_game(game: Game):
     banknotes: list[BanknoteCount] = DEFAULT_BANKNOTES
+    product = all_products.get_random(1)[0]
+    cart_Item: CartItem = {
+        "product": product,
+        "count": 1,
+        "amount": product["price"],
+    }
+    cart: Cart = {
+        "amount": cart_Item["amount"],
+        "products": [cart_Item],
+    }
     data: GameDataV1 = {
         "state": GameState.START,
         "buyer_number": 1,
         "buyer": {
             "number": 1,
-            "product_cost": 80,
+            "cart": cart,
             "gave_money": 100,
             "got_money": 0,
         },
