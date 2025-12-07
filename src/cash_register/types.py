@@ -1,7 +1,10 @@
+from collections.abc import Sequence
+from dataclasses import dataclass
+from functools import cached_property
+from random import randint, shuffle
 from typing import TypedDict
 
 from django.db.models.enums import IntegerChoices, TextChoices
-from typing_extensions import Sequence
 
 
 class Nominal(IntegerChoices):
@@ -24,14 +27,54 @@ class GameState(TextChoices):
 
 
 class Product(TypedDict):
+    id: int
     name: str
+    price: int
+
+
+class CartItem(TypedDict):
+    product: Product
     count: int
     amount: int
 
 
+@dataclass
+class Products:
+    products: list[Product]
+
+    def get(self, id: int) -> Product:
+        product = self.products[id]
+        return {
+            "id": product["id"],
+            "name": product["name"],
+            "price": int(round(product["price"], -1)),
+        }
+
+    def get_random(self, count: int | None = None) -> list[Product]:
+        _count: int = count or randint(1, 8)
+        product_ids: set[int] = set()
+        products: list[Product] = []
+        while len(product_ids) < _count:
+            product_id = randint(0, self.count - 1)
+            if product_id in product_ids:
+                continue
+            product_ids.add(product_id)
+            products.append(self.get(product_id))
+        shuffle(products)
+        return products
+
+    @cached_property
+    def count(self):
+        return len(self.products)
+
+    @cached_property
+    def map(self) -> dict[int, Product]:
+        return {p["id"]: p for p in self.products}
+
+
 class Cart(TypedDict):
     amount: int
-    products: list[Product]
+    products: list[CartItem]
 
 
 class BuyerV1(TypedDict):
