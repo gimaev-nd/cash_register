@@ -1,7 +1,7 @@
 from typing import TypedDict
-from typing_extensions import Sequence
 
 from django.db.models.enums import IntegerChoices, TextChoices
+from typing_extensions import Sequence
 
 
 class Nominal(IntegerChoices):
@@ -23,9 +23,20 @@ class GameState(TextChoices):
     START = "Start", "Старт"
 
 
+class Product(TypedDict):
+    name: str
+    count: int
+    amount: int
+
+
+class Cart(TypedDict):
+    amount: int
+    products: list[Product]
+
+
 class BuyerV1(TypedDict):
     number: int
-    product_cost: int
+    cart: Cart
     gave_money: int
     got_money: int
 

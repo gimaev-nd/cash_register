@@ -37,7 +37,7 @@ def change_banknotes(
 
 def merge_banknotes(
     banknotes_1: Sequence[BanknoteCount], banknotes_2: Sequence[BanknoteCount]
-) -> tuple[BanknoteCount]:
+) -> tuple[BanknoteCount,...]:
     banknote_dict_1 = banknotes_as_dict(banknotes_1)
     banknote_dict_2 = banknotes_as_dict(banknotes_2)
     banknotes: list[BanknoteCount] = []
