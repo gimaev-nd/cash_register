@@ -40,7 +40,9 @@ class GameView(TemplateView):
     game: Game
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        game_id = request.session.get("game_id")
+        game_id: int | None = request.session.get("game_id")
+        if game_id is None:
+            return redirect("meet")
         game = Game.objects.filter(id=game_id).first()
         if not game:
             request.session.delete("game_id")

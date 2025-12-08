@@ -20,7 +20,7 @@ class Game(models.Model):
         self.update_version()
         return parse(self.data)  # pyright: ignore[reportAny]
 
-    def set_game_data(self, data) -> GameDataV1:
+    def set_game_data(self, data: GameDataV1) -> None:
         self.version = 1
         self.data = data
         self.save()

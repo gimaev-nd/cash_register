@@ -12,7 +12,9 @@ DEFAULT_BANKNOTES: list[BanknoteCount] = [
 ]
 
 
-def sum_as_banknotes(value: int, max_nominal: Nominal = None) -> tuple[BanknoteCount,...]:
+def sum_as_banknotes(
+    value: int, max_nominal: Nominal | None = None
+) -> tuple[BanknoteCount, ...]:
     nominal_index = [*Nominal].index(max_nominal) + 1 if max_nominal else None
     nominals = sorted([*Nominal][:nominal_index], reverse=True)
     banknotes: list[BanknoteCount] = []
@@ -25,11 +27,14 @@ def sum_as_banknotes(value: int, max_nominal: Nominal = None) -> tuple[BanknoteC
 
 
 def change_banknotes(
-    banknotes: tuple[BanknoteCount], nominal: Nominal
-) -> tuple[BanknoteCount]:
+    banknotes: Sequence[BanknoteCount], nominal: Nominal
+) -> tuple[BanknoteCount, ...]:
     if not [*Nominal].index(nominal):
-        return banknotes
-    new_banknotes = [{"count": -1, "nominal": nominal}]
+        if isinstance(banknotes, tuple):
+            return banknotes
+        else:
+            return tuple(banknotes)
+    new_banknotes: list[BanknoteCount] = [{"count": -1, "nominal": nominal}]
     new_banknotes.extend(sum_as_banknotes(nominal, nominal.get_prev()))
     assert calc_cash(new_banknotes) == 0
     return merge_banknotes(banknotes, new_banknotes)
@@ -37,7 +42,7 @@ def change_banknotes(
 
 def merge_banknotes(
     banknotes_1: Sequence[BanknoteCount], banknotes_2: Sequence[BanknoteCount]
-) -> tuple[BanknoteCount,...]:
+) -> tuple[BanknoteCount, ...]:
     banknote_dict_1 = banknotes_as_dict(banknotes_1)
     banknote_dict_2 = banknotes_as_dict(banknotes_2)
     banknotes: list[BanknoteCount] = []
