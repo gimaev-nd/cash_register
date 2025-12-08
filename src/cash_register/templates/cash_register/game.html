@@ -24,19 +24,32 @@
             }
             #cashe_reader_screen {
                 font-family: monospace;
-                font-size: x-large;
                 width: 80%;
                 border: 1px solid gray;
                 padding: 16px;
                 margin: 16px auto;
             }
+            #cashe_reader_screen > .cart_amount {
+                font-size: x-large;
+            }
+            #cashe_reader_screen > table {
+                font-size: small;
+                width: 100%;
+            }
+            #cashe_reader_screen .product_amount {
+                text-align: right;
+            }
         </style>
     </head>
     <body>
         <div class="wrapper">
-            <h1>Покупатель №1</h1>
+            <h1>Покупатель 1 из 2</h1>
             <div class="row">
-                <div id="cashe_reader_screen">Нужно просканировать товары</div>
+                <div id="cashe_reader_screen">
+                    {% if game.states.screen == "amount" %} {# ------------- #}
+                    {% include "cash_register/screen_amount.html" %} Нужно
+                    просканировать товары {% endif %}
+                </div>
             </div>
             <div class="row">
                 <div class="column" id="purchase">
@@ -45,7 +58,7 @@
                 </div>
                 <div class="column" id="cash_register">
                     <div class="cash"><h2>Касса</h2></div>
-                    <div class="buttons">
+                    <div class="buttons" id="cash_register_buttons">
                         <button>Открыть кассу</button>
                         <button hx-get="/scan" hx-target="#cashe_reader_screen">
                             Просканировать товары

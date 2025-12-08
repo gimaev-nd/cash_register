@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 from django.views.generic.base import TemplateView
 
 from cash_register.models import Game
-from cash_register.services.game import get_game_by_gamer_name
+from cash_register.services.game import do_scan, get_game_by_gamer_name
 from cash_register.types import GameDataV1
 
 
@@ -32,6 +32,7 @@ class Meet(TemplateView):
 @final
 class GameView(TemplateView):
     template_name = "cash_register/game.html"
+    game: Game
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         game_id = request.session.get("game_id")
@@ -39,11 +40,19 @@ class GameView(TemplateView):
         if not game:
             request.session.delete("game_id")
             return redirect("meet")
+        self.game = game
         return super().get(request)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        kwargs["game"] = self.game.data
+        return kwargs
 
 
 def scan_products(request: HttpRequest) -> HttpResponse:
     name: str = request.session["name"]
     game = get_game_by_gamer_name(name)
+    do_scan(game)
     game_data: GameDataV1 = game.data
-    return render(request, "cash_register/scan.html", context={"game": game_data})
+    return render(
+        request, "cash_register/screen_amount.html", context={"game": game_data}
+    )

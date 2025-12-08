@@ -1,0 +1,12 @@
+level_count: 0
+levels:
+    1:
+        buyers: 2
+        min_nominal: 10
+        max_nominal: 1000
+        max_cart_item_count: 1
+    default:
+        buyers: 20
+        min_nominal: 10
+        max_nominal: 1000
+        max_cart_item_count: 8

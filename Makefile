@@ -10,3 +10,8 @@ mm:
 	src/manage.py makemigrations
 	src/manage.py migrate
 	uv run ruff check --fix
+.PHONY: del_db
+del_db:
+	rm -f src/db.sqlite3||echo File not found
+.PHONY: cmm
+cmm: del_db mm

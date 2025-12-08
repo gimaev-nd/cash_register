@@ -26,6 +26,11 @@ class GameState(TextChoices):
     START = "Start", "Старт"
 
 
+class ScreenState(TextChoices):
+    START = "start", "Старт"
+    AMOUNT = "amount", "Сумма"
+
+
 class Product(TypedDict):
     id: int
     name: str
@@ -74,7 +79,7 @@ class Products:
 
 class Cart(TypedDict):
     amount: int
-    products: list[CartItem]
+    items: list[CartItem]
 
 
 class BuyerV1(TypedDict):
@@ -89,8 +94,13 @@ class BanknoteCount(TypedDict):
     nominal: Nominal
 
 
+class GameStates(TypedDict):
+    game: GameState
+    screen: ScreenState
+
+
 class GameDataV1(TypedDict):
-    state: GameState
+    states: GameStates
     buyer_number: int
     buyer: BuyerV1
     cash: int  # остаток денег в кассе

@@ -1,0 +1,15 @@
+{% with game.buyer.cart as cart %}
+<div class="cart_amount">Стоимость: {{cart.amount}} рублей</div>
+<table>
+    {% for cart_item in cart.items %}
+    <tr>
+        <td>🛒{{cart_item.product.name}}</td>
+        <td class="product_amount">
+            {{cart_item.count}}&nbsp;⨯&nbsp;{{cart_item.product.price}}&nbsp;=&nbsp;{{cart_item.amount}}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<!--<pre>{{ cart | pprint }}</pre>-->
+{% endwith %}

@@ -9,6 +9,7 @@ from cash_register.types import (
     GameDataV1,
     GameState,
     Nominal,
+    ScreenState,
 )
 from users.models import Gamer
 from users.services.gamer import get_gamer
@@ -40,10 +41,13 @@ def init_game(game: Game):
     }
     cart: Cart = {
         "amount": cart_Item["amount"],
-        "products": [cart_Item],
+        "items": [cart_Item],
     }
     data: GameDataV1 = {
-        "state": GameState.START,
+        "states": {
+            "game": GameState.START,
+            "screen": ScreenState.START,
+        },
         "buyer_number": 1,
         "buyer": {
             "number": 1,
@@ -69,3 +73,9 @@ def change_money(game: Game, nominal: Nominal):
 """    game.data = data
     game.save()
 """
+
+
+def do_scan(game: Game):
+    data = game.get_game_data()
+    data["states"]["screen"] = ScreenState.AMOUNT
+    game.set_game_data(data)
