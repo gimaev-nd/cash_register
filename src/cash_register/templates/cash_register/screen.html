@@ -1,4 +1,4 @@
-{% with game.buyer.cart as cart %}
+{% with game.buyer.cart as cart %} {% if game.states.screen == "amount" %}
 <div class="cart_amount">Стоимость: {{cart.amount}} рублей</div>
 <table>
     {% for cart_item in cart.items %}
@@ -10,6 +10,4 @@
     </tr>
     {% endfor %}
 </table>
-
-<!--<pre>{{ cart | pprint }}</pre>-->
-{% endwith %}
+{% else %} Нужно просканировать товары {% endif %} {% endwith %}

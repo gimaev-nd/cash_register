@@ -1,12 +1,17 @@
-from typing import Any, final
+from typing import Any, Callable, final
 
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
 
 from cash_register.models import Game
-from cash_register.services.game import do_scan, get_game_by_gamer_name
-from cash_register.types import GameDataV1
+from cash_register.services.game import (
+    ask_purchase,
+    do_scan,
+    get_buyer_cash,
+    get_game_by_gamer_name,
+    noop,
+)
 
 
 # Create your views here.
@@ -45,14 +50,32 @@ class GameView(TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         kwargs["game"] = self.game.data
+        kwargs["buyer_cash"] = get_buyer_cash(self.game)
         return kwargs
 
 
-def scan_products(request: HttpRequest) -> HttpResponse:
-    name: str = request.session["name"]
-    game = get_game_by_gamer_name(name)
-    do_scan(game)
-    game_data: GameDataV1 = game.data
-    return render(
-        request, "cash_register/screen_amount.html", context={"game": game_data}
-    )
+class HxGameView(View):
+    template_name: str = ""
+    action: Callable[[Game], None] = noop
+
+    def post(self, request):
+        name: str = request.session["name"]
+        game = get_game_by_gamer_name(name)
+        self.action(game)
+        context = {
+            "name": name,
+            "game": game.data,
+            "buyer_cash": get_buyer_cash(game),
+        }
+        return render(request, self.template_name, context=context)
+
+
+scan_products_view = HxGameView.as_view(
+    template_name="cash_register/htmx/hx_screen.html",
+    action=do_scan,
+)
+
+ask_purchase_view = HxGameView.as_view(
+    template_name="cash_register/hx_purchase.html",
+    action=ask_purchase,
+)

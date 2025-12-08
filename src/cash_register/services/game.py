@@ -6,15 +6,17 @@ from cash_register.types import (
     BanknoteCount,
     Cart,
     CartItem,
+    CashRegisterState,
+    ChangeState,
     GameDataV1,
-    GameState,
     Nominal,
+    PurchaseState,
     ScreenState,
 )
 from users.models import Gamer
 from users.services.gamer import get_gamer
 
-from .banknotes import DEFAULT_BANKNOTES, calc_cash
+from .banknotes import DEFAULT_BANKNOTES, calc_cash, sum_as_banknotes
 
 
 def get_game(gamer: Gamer) -> Game:
@@ -45,8 +47,10 @@ def init_game(game: Game):
     }
     data: GameDataV1 = {
         "states": {
-            "game": GameState.START,
+            "cash_register": CashRegisterState.START,
             "screen": ScreenState.START,
+            "purchase": PurchaseState.START,
+            "change": ChangeState.START,
         },
         "buyer_number": 1,
         "buyer": {
@@ -78,4 +82,21 @@ def change_money(game: Game, nominal: Nominal):
 def do_scan(game: Game):
     data = game.get_game_data()
     data["states"]["screen"] = ScreenState.AMOUNT
+    data["states"]["purchase"] = PurchaseState.ASK_PAYMENT
     game.set_game_data(data)
+
+
+def ask_purchase(game: Game):
+    data = game.get_game_data()
+    data["states"]["purchase"] = PurchaseState.PAYMENT
+    game.set_game_data(data)
+
+
+def get_buyer_cash(game: Game) -> tuple[BanknoteCount, ...]:
+    data = game.get_game_data()
+    buyer = data["buyer"]
+    return sum_as_banknotes(buyer["gave_money"])
+
+
+def noop(game: Game):
+    pass

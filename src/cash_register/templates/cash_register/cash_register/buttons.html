@@ -1,0 +1,5 @@
+{% with game.states as states %} {% if states.screen == "start" %}
+<button hx-post="/scan/" hx-target="#cashe_reader_screen">
+    Просканировать товары
+</button>
+{% endif %} {% endwith %}

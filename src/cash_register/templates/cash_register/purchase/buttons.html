@@ -1,0 +1,4 @@
+{% with game.buyer.cart as cart %} {# -------------------------------------- #}
+{% if game.states.purchase == "ask_payment" %}
+<button>Попросить {{cart.amount}} рублей</button>
+{% elif game.states.purchase == "" %} {% endif %} {% endwith %}

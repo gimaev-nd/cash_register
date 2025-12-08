@@ -24,5 +24,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", cash_register_views.Meet.as_view(), name="meet"),
     path("game/", cash_register_views.GameView.as_view(), name="game"),
-    path("scan/", cash_register_views.scan_products, name="scan"),
+    path("scan/", cash_register_views.scan_products_view, name="scan"),
 ]

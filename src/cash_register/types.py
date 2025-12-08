@@ -22,13 +22,26 @@ class Nominal(IntegerChoices):
             return nominals[nominal_index - 1]
 
 
-class GameState(TextChoices):
-    START = "Start", "Старт"
+class CashRegisterState(TextChoices):
+    START = "start", "Старт"
+    OPEN = "open", "Открыто"
+    CHANGE_MONEY = "change_money", "Размен"
+    INCREASE = "increase", "Укрупнить"
 
 
 class ScreenState(TextChoices):
     START = "start", "Старт"
     AMOUNT = "amount", "Сумма"
+
+
+class PurchaseState(TextChoices):
+    START = "start", "Старт"
+    ASK_PAYMENT = "ask_payment", "Попросить оплату"
+    PAYMENT = "payment", "Оплата"
+
+
+class ChangeState(TextChoices):
+    START = "start", "Старт"
 
 
 class Product(TypedDict):
@@ -95,8 +108,10 @@ class BanknoteCount(TypedDict):
 
 
 class GameStates(TypedDict):
-    game: GameState
+    cash_register: CashRegisterState
     screen: ScreenState
+    purchase: PurchaseState
+    change: ChangeState
 
 
 class GameDataV1(TypedDict):
