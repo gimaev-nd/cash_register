@@ -9,6 +9,7 @@ dependencies = [
     "django-cotton>=2.5.0",
     "django-htmx>=1.27.0",
     "django-stubs-ext>=5.2.8",
+    "pydantic>=2.12.5",
     "ruyaml>=0.91.0",
 ]
 

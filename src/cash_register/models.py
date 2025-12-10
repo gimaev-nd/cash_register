@@ -1,12 +1,7 @@
-from typing import cast
 
 from django.db import models
 
 from cash_register.types import GameDataV1
-
-
-def parse(game):  # pyright: ignore[reportMissingParameterType, reportUnknownParameterType]
-    return cast(GameDataV1, game)
 
 
 class Game(models.Model):
@@ -18,11 +13,12 @@ class Game(models.Model):
 
     def get_game_data(self) -> GameDataV1:
         self.update_version()
-        return parse(self.data)  # pyright: ignore[reportAny]
+        print(self.data)
+        return GameDataV1.model_validate(self.data)
 
     def set_game_data(self, data: GameDataV1) -> None:
         self.version = 1
-        self.data = data
+        self.data = data.model_dump()
         self.save()
 
     def update_version(self) -> None:

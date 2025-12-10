@@ -61,7 +61,7 @@ class GameView(TemplateView):
         return super().get(request)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        kwargs["game"] = self.game.data
+        kwargs["game"] = self.game.get_game_data()
         return kwargs
 
 
@@ -75,7 +75,7 @@ class HxGameView(View):
         self.action(game)
         context = {
             "name": name,
-            "game": game.data,
+            "game": game.get_game_data(),
         }
         return render(request, self.template_name, context=context)
 
