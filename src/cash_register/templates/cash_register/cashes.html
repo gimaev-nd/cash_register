@@ -1,0 +1,22 @@
+<div class="column" id="purchase">
+    <h2>Оплата</h2>
+    <div class="cash" id="purchase_cashe">
+        {% include "cash_register/purchase/cash.html" %}
+    </div>
+    <div class="buttons" id="purchase_buttons">
+        {% include "cash_register/purchase/buttons.html" %}
+    </div>
+</div>
+<div class="column" id="cash_register">
+    <h2>Касса</h2>
+    <div class="cash" id="cash_register_cash">
+        {% include "cash_register/cash_register/cash.html" %}
+    </div>
+    <div class="buttons" id="cash_register_buttons">
+        {% include "cash_register/cash_register/buttons.html" %}
+    </div>
+</div>
+<div class="column" id="change">
+    <div class="cash"><h2>Сдача</h2></div>
+    <div class="buttons"></div>
+</div>

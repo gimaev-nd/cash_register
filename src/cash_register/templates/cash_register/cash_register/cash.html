@@ -1,3 +1,3 @@
-{% if game.purchase.state == "payment" %}
-<c-cash :cash="game.cash_register" />
+{% if game.cash_register.state == "open" %}
+<c-cash :cash="game.cash_register.cash" />
 {% endif %}

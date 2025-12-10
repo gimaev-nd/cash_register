@@ -8,10 +8,10 @@ from cash_register.models import Game
 from cash_register.services.game import (
     ask_payment,
     do_scan,
-    get_buyer_cash,
     get_game_by_gamer_name,
     noop,
     open_cash_register,
+    take_cashe,
 )
 
 
@@ -62,12 +62,11 @@ class GameView(TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         kwargs["game"] = self.game.data
-        kwargs["buyer_cash"] = get_buyer_cash(self.game)
         return kwargs
 
 
 class HxGameView(View):
-    template_name: str = ""
+    template_name: str = "cash_register/htmx/hx_game.html"
     action: Callable[[Game], None] = noop
 
     def post(self, request):
@@ -77,23 +76,11 @@ class HxGameView(View):
         context = {
             "name": name,
             "game": game.data,
-            "buyer_cash": get_buyer_cash(game),
         }
-        print(context["buyer_cash"])
         return render(request, self.template_name, context=context)
 
 
-scan_products_view = HxGameView.as_view(
-    template_name="cash_register/htmx/hx_screen.html",
-    action=do_scan,
-)
-
-ask_payment_view = HxGameView.as_view(
-    template_name="cash_register/htmx/hx_purchase.html",
-    action=ask_payment,
-)
-
-open_view = HxGameView.as_view(
-    template_name="cash_register/htmx/hx_cash_register.html",
-    action=open_cash_register,
-)
+scan_products_view = HxGameView.as_view(action=do_scan)
+ask_payment_view = HxGameView.as_view(action=ask_payment)
+open_view = HxGameView.as_view(action=open_cash_register)
+take_cashe_view = HxGameView.as_view(action=take_cashe)

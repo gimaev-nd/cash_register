@@ -122,6 +122,7 @@ def take_cashe(game: Game):
     data["cash_register"]["cash"] = merge_banknotes(
         data["cash_register"]["cash"], data["purchase"]["cash"]
     )
+    data["purchase"]["cash"] = []
     game.set_game_data(data)
 
 
