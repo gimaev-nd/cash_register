@@ -1,11 +1,9 @@
-<div id="game" class="wrapper">
-    <h1>Покупатель 1 из 2</h1>
-    <div class="row">
-        <div id="cashe_reader_screen">
-            {% include "cash_register/screen.html" %}
-        </div>
+<h1>Покупатель 1 из 2</h1>
+<div class="row">
+    <div id="cashe_reader_screen">
+        {% include "cash_register/screen.html" %}
     </div>
-    <div class="row" id="cashes">{% include "cash_register/cashes.html" %}</div>
-    <div class="row"></div>
 </div>
+<div class="row" id="cashes">{% include "cash_register/cashes.html" %}</div>
+<div class="row"></div>
 <div id="debug">{% include "cash_register/debug.html" %}</div>
