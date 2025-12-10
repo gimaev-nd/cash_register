@@ -7,6 +7,12 @@
         <title>Работа на кассе</title>
         <script src="{% static 'vendor/htmx/js/htmx.min.js' %}"></script>
         <style>
+            h2 {
+                margin: 16px 0 8px;
+            }
+            .buttons {
+                margin-top: 8px;
+            }
             .row {
                 display: flex;
 
@@ -39,6 +45,25 @@
             #cashe_reader_screen .product_amount {
                 text-align: right;
             }
+            table.cash {
+                border-spacing: 4px;
+            }
+            table.cash td {
+                vertical-align: middle;
+            }
+            td.count {
+                text-align: right;
+            }
+            td.operation {
+                text-align: center;
+            }
+            td.nominal {
+                text-align: right;
+                background-color: rgb(128, 255, 128, 0.3);
+                width: 40px;
+                border: 1px solid rgb(0, 128, 0, 0.4);
+                padding: 1px 4px;
+            }
         </style>
     </head>
     <body hx-headers='{"x-csrftoken": "{{ csrf_token }}"}'>
@@ -51,13 +76,19 @@
             </div>
             <div class="row">
                 <div class="column" id="purchase">
-                    <div class="cash" id="purchase_cashe"><h2>Оплата</h2></div>
+                    <h2>Оплата</h2>
+                    <div class="cash" id="purchase_cashe">
+                        {% include "cash_register/purchase/cash.html" %}
+                    </div>
                     <div class="buttons" id="purchase_buttons">
                         {% include "cash_register/purchase/buttons.html" %}
                     </div>
                 </div>
                 <div class="column" id="cash_register">
-                    <div class="cash"><h2>Касса</h2></div>
+                    <h2>Касса</h2>
+                    <div class="cash" id="cash_register_cash">
+                        {% include "cash_register/cash_register/cash.html" %}
+                    </div>
                     <div class="buttons" id="cash_register_buttons">
                         {% include "cash_register/cash_register/buttons.html" %}
                     </div>

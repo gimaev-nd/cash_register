@@ -6,11 +6,12 @@ from django.views.generic.base import TemplateView, View
 
 from cash_register.models import Game
 from cash_register.services.game import (
-    ask_purchase,
+    ask_payment,
     do_scan,
     get_buyer_cash,
     get_game_by_gamer_name,
     noop,
+    open_cash_register,
 )
 
 
@@ -69,6 +70,7 @@ class HxGameView(View):
             "game": game.data,
             "buyer_cash": get_buyer_cash(game),
         }
+        print(context["buyer_cash"])
         return render(request, self.template_name, context=context)
 
 
@@ -77,7 +79,12 @@ scan_products_view = HxGameView.as_view(
     action=do_scan,
 )
 
-ask_purchase_view = HxGameView.as_view(
-    template_name="cash_register/hx_purchase.html",
-    action=ask_purchase,
+ask_payment_view = HxGameView.as_view(
+    template_name="cash_register/htmx/hx_purchase.html",
+    action=ask_payment,
+)
+
+open_view = HxGameView.as_view(
+    template_name="cash_register/htmx/hx_cash_register.html",
+    action=open_cash_register,
 )

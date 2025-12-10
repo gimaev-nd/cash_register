@@ -83,10 +83,11 @@ def do_scan(game: Game):
     data = game.get_game_data()
     data["states"]["screen"] = ScreenState.AMOUNT
     data["states"]["purchase"] = PurchaseState.ASK_PAYMENT
+    data["buyer"]["gave_money"] = data["buyer"]["cart"]["amount"]
     game.set_game_data(data)
 
 
-def ask_purchase(game: Game):
+def ask_payment(game: Game):
     data = game.get_game_data()
     data["states"]["purchase"] = PurchaseState.PAYMENT
     game.set_game_data(data)
@@ -96,6 +97,12 @@ def get_buyer_cash(game: Game) -> tuple[BanknoteCount, ...]:
     data = game.get_game_data()
     buyer = data["buyer"]
     return sum_as_banknotes(buyer["gave_money"])
+
+
+def open_cash_register(game: Game):
+    data = game.get_game_data()
+    data["states"]["cash_register"] = CashRegisterState.OPEN
+    game.set_game_data(data)
 
 
 def noop(game: Game):

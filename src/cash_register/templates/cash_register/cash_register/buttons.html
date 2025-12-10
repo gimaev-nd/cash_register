@@ -2,4 +2,6 @@
 <button hx-post="/scan/" hx-target="#cashe_reader_screen">
     Просканировать товары
 </button>
+{% elif states.purchase == "payment" and states.cash_register == "start" %}
+<button hx-post="/open/" hx-target="#cash_register_cash">Открыть ящик</button>
 {% endif %} {% endwith %}

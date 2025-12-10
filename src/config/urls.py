@@ -25,4 +25,6 @@ urlpatterns = [
     path("", cash_register_views.Meet.as_view(), name="meet"),
     path("game/", cash_register_views.GameView.as_view(), name="game"),
     path("scan/", cash_register_views.scan_products_view, name="scan"),
+    path("ask_payment/", cash_register_views.ask_payment_view, name="ask_payment"),
+    path("open/", cash_register_views.open_view, name="open"),
 ]

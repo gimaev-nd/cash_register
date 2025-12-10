@@ -1,6 +1,6 @@
 {% with game.buyer.cart as cart %} {# -------------------------------------- #}
 {% if game.states.purchase == "ask_payment" %}
-<button hx-post="/ask_payment/" hx-terget="#purchase_cashe">
+<button hx-post="/ask_payment/" hx-target="#purchase_cashe">
     Попросить {{cart.amount}} рублей
 </button>
 {% elif game.states.purchase == "" %} {% endif %} {% endwith %}
