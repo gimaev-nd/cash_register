@@ -1,4 +1,3 @@
-from collections.abc import Sequence
 from dataclasses import dataclass
 from functools import cached_property
 from random import randint, shuffle
@@ -31,13 +30,15 @@ class CashRegisterState(TextChoices):
 
 class ScreenState(TextChoices):
     START = "start", "Старт"
-    AMOUNT = "amount", "Сумма"
+    COST = "cost", "Стоимость"
+    CASH = "cash", "Наличные"
 
 
 class PurchaseState(TextChoices):
     START = "start", "Старт"
     ASK_PAYMENT = "ask_payment", "Попросить оплату"
     PAYMENT = "payment", "Оплата"
+    PAID = "paid", "Оплачено"
 
 
 class ChangeState(TextChoices):
@@ -95,28 +96,48 @@ class Cart(TypedDict):
     items: list[CartItem]
 
 
-class BuyerV1(TypedDict):
-    number: int
-    cart: Cart
-    gave_money: int
-    got_money: int
-
-
 class BanknoteCount(TypedDict):
     count: int
     nominal: Nominal
 
 
-class GameStates(TypedDict):
-    cash_register: CashRegisterState
-    screen: ScreenState
-    purchase: PurchaseState
-    change: ChangeState
+CashType = list[BanknoteCount]
+
+
+class BuyerV1(TypedDict):
+    number: int
+    cart: Cart
+    gave_money: int
+    got_money: int
+    cash: CashType
+
+
+class Purchase(TypedDict):
+    state: PurchaseState
+    cash: CashType
+
+
+class Screen(TypedDict):
+    state: ScreenState
+    product_cost: int
+    cash_amount: int
+    change: int
+
+
+class CashRegister(TypedDict):
+    state: CashRegisterState
+    cash: CashType
+    amount: int
+
+
+class Change(TypedDict):
+    state: ChangeState
+    cash: CashType
 
 
 class GameDataV1(TypedDict):
-    states: GameStates
-    buyer_number: int
     buyer: BuyerV1
-    cash: int  # остаток денег в кассе
-    cash_register: Sequence[BanknoteCount]
+    screen: Screen
+    purchase: Purchase
+    cash_register: CashRegister
+    change: Change

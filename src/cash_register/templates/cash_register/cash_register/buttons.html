@@ -1,7 +1,8 @@
-{% with game.states as states %} {% if states.screen == "start" %}
+{% with screen=game.screen purchase=game.purchase %} {# ------------------- #}
+{% if screen.state == "start" %}
 <button hx-post="/scan/" hx-target="#cashe_reader_screen">
     Просканировать товары
 </button>
-{% elif states.purchase == "payment" and states.cash_register == "start" %}
+{% elif purchase.state == "payment" and cash_register.state == "start"%}
 <button hx-post="/open/" hx-target="#cash_register_cash">Открыть ящик</button>
 {% endif %} {% endwith %}

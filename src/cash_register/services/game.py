@@ -3,10 +3,10 @@ from typing import cast
 from cash_register.models import Game
 from cash_register.services.products import all_products
 from cash_register.types import (
-    BanknoteCount,
     Cart,
     CartItem,
     CashRegisterState,
+    CashType,
     ChangeState,
     GameDataV1,
     Nominal,
@@ -16,7 +16,7 @@ from cash_register.types import (
 from users.models import Gamer
 from users.services.gamer import get_gamer
 
-from .banknotes import DEFAULT_BANKNOTES, calc_cash, sum_as_banknotes
+from .banknotes import DEFAULT_BANKNOTES, calc_cash, merge_banknotes, sum_as_banknotes
 
 
 def get_game(gamer: Gamer) -> Game:
@@ -34,7 +34,7 @@ def get_game_by_gamer_name(name: str) -> Game:
 
 
 def init_game(game: Game):
-    banknotes: list[BanknoteCount] = DEFAULT_BANKNOTES
+    banknotes: CashType = DEFAULT_BANKNOTES
     product = all_products.get_random(1)[0]
     cart_Item: CartItem = {
         "product": product,
@@ -46,24 +46,31 @@ def init_game(game: Game):
         "items": [cart_Item],
     }
     data: GameDataV1 = {
-        "states": {
-            "cash_register": CashRegisterState.START,
-            "screen": ScreenState.START,
-            "purchase": PurchaseState.START,
-            "change": ChangeState.START,
-        },
-        "buyer_number": 1,
+        "purchase": {"state": PurchaseState.START, "cash": []},
         "buyer": {
             "number": 1,
             "cart": cart,
             "gave_money": 100,
             "got_money": 0,
+            "cash": [],
         },
-        "cash": calc_cash(banknotes),
-        "cash_register": banknotes,
+        "cash_register": {
+            "cash": banknotes,
+            "amount": calc_cash(banknotes),
+            "state": CashRegisterState.START,
+        },
+        "screen": {
+            "state": ScreenState.START,
+            "cash_amount": 0,
+            "change": 0,
+            "product_cost": 0,
+        },
+        "change": {
+            "cash": [],
+            "state": ChangeState.START,
+        },
     }
-    game.data = data
-    game.save()
+    game.set_game_data(data)
 
 
 def start(game: Game):
@@ -81,19 +88,23 @@ def change_money(game: Game, nominal: Nominal):
 
 def do_scan(game: Game):
     data = game.get_game_data()
-    data["states"]["screen"] = ScreenState.AMOUNT
-    data["states"]["purchase"] = PurchaseState.ASK_PAYMENT
-    data["buyer"]["gave_money"] = data["buyer"]["cart"]["amount"]
+    data["purchase"]["state"] = PurchaseState.ASK_PAYMENT
+    buyer = data["buyer"]
+    buyer["gave_money"] = buyer["cart"]["amount"]
+    screen = data["screen"]
+    screen["state"] = ScreenState.COST
+    screen["product_cost"] = buyer["cart"]["amount"]
     game.set_game_data(data)
 
 
 def ask_payment(game: Game):
     data = game.get_game_data()
-    data["states"]["purchase"] = PurchaseState.PAYMENT
+    data["purchase"]["state"] = PurchaseState.PAYMENT
+    data["purchase"]["cash"] = get_buyer_cash(game)
     game.set_game_data(data)
 
 
-def get_buyer_cash(game: Game) -> tuple[BanknoteCount, ...]:
+def get_buyer_cash(game: Game) -> CashType:
     data = game.get_game_data()
     buyer = data["buyer"]
     return sum_as_banknotes(buyer["gave_money"])
@@ -101,7 +112,16 @@ def get_buyer_cash(game: Game) -> tuple[BanknoteCount, ...]:
 
 def open_cash_register(game: Game):
     data = game.get_game_data()
-    data["states"]["cash_register"] = CashRegisterState.OPEN
+    data["cash_register"]["state"] = CashRegisterState.OPEN
+    game.set_game_data(data)
+
+
+def take_cashe(game: Game):
+    data = game.get_game_data()
+    data["purchase"]["state"] = PurchaseState.PAID
+    data["cash_register"]["cash"] = merge_banknotes(
+        data["cash_register"]["cash"], data["purchase"]["cash"]
+    )
     game.set_game_data(data)
 
 

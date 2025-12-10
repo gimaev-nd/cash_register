@@ -19,9 +19,8 @@
                 justify-content: space-between;
                 align-items: stretch;
 
-                background-color: #bbdefb;
                 height: 100%;
-                gap: 5px;
+                gap: 4px;
             }
             .column {
                 flex-grow: 1;
@@ -42,7 +41,7 @@
                 font-size: small;
                 width: 100%;
             }
-            #cashe_reader_screen .product_amount {
+            #cashe_reader_screen .product_cost {
                 text-align: right;
             }
             table.cash {
@@ -100,5 +99,6 @@
             </div>
             <div class="row"></div>
         </div>
+        <div id="debug">{% include "cash_register/debug.html" %}</div>
     </body>
 </html>

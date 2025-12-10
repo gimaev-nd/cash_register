@@ -1,10 +1,10 @@
-{% with game.buyer.cart as cart %} {% if game.states.screen == "amount" %}
-<div class="cart_amount">Стоимость: {{cart.amount}} рублей</div>
+{% with game.buyer.cart as cart %} {% if game.screen.state == "cost" %}
+<div class="cart_amount">Стоимость: {{game.screen.product_cost}} рублей</div>
 <table>
     {% for cart_item in cart.items %}
     <tr>
         <td>🛒{{cart_item.product.name}}</td>
-        <td class="product_amount">
+        <td class="product_cost">
             {{cart_item.count}}&nbsp;⨯&nbsp;{{cart_item.product.price}}&nbsp;=&nbsp;{{cart_item.amount}}
         </td>
     </tr>

@@ -24,6 +24,9 @@ class Meet(TemplateView):
         game_id = request.session.get("game_id")
         if game_id:
             return redirect("game")
+        if True:
+            _ = self.create_game(request, "Наиль")
+            return redirect("game")
         return super().get(request)
 
     def post(self, request: HttpRequest) -> HttpResponse:
@@ -33,6 +36,12 @@ class Meet(TemplateView):
         request.session["game_id"] = game.pk
 
         return redirect("game")
+
+    def create_game(self, request: HttpRequest, name: str) -> Game:
+        game = get_game_by_gamer_name(name)
+        request.session["name"] = name
+        request.session["game_id"] = game.pk
+        return game
 
 
 @final

@@ -1,3 +1,10 @@
 <div class="cash" id="cash_register_cash">
     {% include "cash_register/cash_register/cash.html" %}
 </div>
+
+<div class="buttons" id="cash_register_buttons" hx-swap-oob="true">
+    {% include "cash_register/cash_register/buttons.html" %}
+</div>
+<div id="debug" hx-swap-oob="true">
+    {% include "cash_register/debug.html" %}
+</div>

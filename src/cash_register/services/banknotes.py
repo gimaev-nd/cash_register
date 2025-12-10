@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 from operator import itemgetter
 
-from cash_register.types import BanknoteCount, Nominal
+from cash_register.types import BanknoteCount, CashType, Nominal
 
 DEFAULT_BANKNOTES: list[BanknoteCount] = [
     {"count": 1, "nominal": Nominal.THOUSAND},
@@ -12,9 +12,7 @@ DEFAULT_BANKNOTES: list[BanknoteCount] = [
 ]
 
 
-def sum_as_banknotes(
-    value: int, max_nominal: Nominal | None = None
-) -> tuple[BanknoteCount, ...]:
+def sum_as_banknotes(value: int, max_nominal: Nominal | None = None) -> CashType:
     nominal_index = [*Nominal].index(max_nominal) + 1 if max_nominal else None
     nominals = sorted([*Nominal][:nominal_index], reverse=True)
     banknotes: list[BanknoteCount] = []
@@ -23,17 +21,12 @@ def sum_as_banknotes(
         if not count:
             continue
         banknotes.append({"count": count, "nominal": nominal})
-    return tuple(sorted(banknotes, key=itemgetter("nominal")))
+    return sorted(banknotes, key=itemgetter("nominal"))
 
 
-def change_banknotes(
-    banknotes: Sequence[BanknoteCount], nominal: Nominal
-) -> tuple[BanknoteCount, ...]:
+def change_banknotes(banknotes: CashType, nominal: Nominal) -> CashType:
     if not [*Nominal].index(nominal):
-        if isinstance(banknotes, tuple):
-            return banknotes
-        else:
-            return tuple(banknotes)
+        return banknotes
     new_banknotes: list[BanknoteCount] = [{"count": -1, "nominal": nominal}]
     new_banknotes.extend(sum_as_banknotes(nominal, nominal.get_prev()))
     assert calc_cash(new_banknotes) == 0
@@ -42,7 +35,7 @@ def change_banknotes(
 
 def merge_banknotes(
     banknotes_1: Sequence[BanknoteCount], banknotes_2: Sequence[BanknoteCount]
-) -> tuple[BanknoteCount, ...]:
+) -> CashType:
     banknote_dict_1 = banknotes_as_dict(banknotes_1)
     banknote_dict_2 = banknotes_as_dict(banknotes_2)
     banknotes: list[BanknoteCount] = []
@@ -57,7 +50,7 @@ def merge_banknotes(
             banknotes.append(banknote_1)
         elif banknote_2:
             banknotes.append(banknote_2)
-    return tuple(banknotes)
+    return banknotes
 
 
 def banknotes_as_dict(

@@ -7,7 +7,7 @@ from cash_register.services.banknotes import (
     merge_banknotes,
     sum_as_banknotes,
 )
-from cash_register.types import BanknoteCount, Nominal
+from cash_register.types import CashType, Nominal
 
 
 def test_nominal():
@@ -17,7 +17,7 @@ def test_nominal():
 # @pytest.mark.skip("")
 @pytest.mark.parametrize("nominal", [Nominal.THOUSAND])
 def test_change(nominal: Nominal):
-    banknotes_before: tuple[BanknoteCount, ...] = ({"count": 1, "nominal": nominal},)
+    banknotes_before: CashType = [{"count": 1, "nominal": nominal}]
     banknotes_after = change_banknotes(banknotes_before, nominal)
     assert calc_cash(banknotes_before) == calc_cash(banknotes_after)
 
