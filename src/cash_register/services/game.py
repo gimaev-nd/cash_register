@@ -104,6 +104,9 @@ def take_cashe(game: Game):
     data.cash_register.cash = merge_banknotes(
         data.cash_register.cash, data.purchase.cash
     )
+    data.screen.state = ScreenState.CASH
+    data.screen.cash_amount = calc_cash(data.purchase.cash)
+    data.screen.change = data.screen.cash_amount - data.screen.product_cost
     data.purchase.cash = []
     game.set_game_data(data)
 

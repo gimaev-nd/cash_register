@@ -13,7 +13,6 @@ class Game(models.Model):
 
     def get_game_data(self) -> GameDataV1:
         self.update_version()
-        print(self.data)
         return GameDataV1.model_validate(self.data)
 
     def set_game_data(self, data: GameDataV1) -> None:

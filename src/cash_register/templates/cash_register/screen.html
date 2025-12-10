@@ -10,4 +10,8 @@
     </tr>
     {% endfor %}
 </table>
+{% elif game.screen.state == "cash" %}
+<div class="cart_amount">Стоимость: {{game.screen.product_cost}} рублей</div>
+<div class="cash_amount">Наличные: {{game.screen.cash_amount}} рублей</div>
+<div class="change">Сдача: {{game.screen.change}} рублей</div>
 {% else %} Нужно просканировать товары {% endif %} {% endwith %}

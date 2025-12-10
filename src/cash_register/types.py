@@ -3,7 +3,7 @@ from functools import cached_property
 from random import randint, shuffle
 
 from django.db.models.enums import IntegerChoices, TextChoices
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 
 class Nominal(IntegerChoices):
@@ -50,6 +50,10 @@ class Product(BaseModel):
     name: str
     price: int
 
+    @field_validator("price")
+    def round_to_tens(cls, price: int):
+        return ((price + 5) // 10) * 10
+
 
 class CartItem(BaseModel):
     product: Product
@@ -62,8 +66,7 @@ class Products:
     products: list[Product]
 
     def get(self, id: int) -> Product:
-        product = self.map[id]
-        return Product(id=id, name=product.name, price=int(round(product.price, -1)))
+        return self.map[id]
 
     def get_random(self, count: int | None = None) -> list[Product]:
         _count: int = count or randint(1, 8)

@@ -69,7 +69,7 @@ class HxGameView(View):
     template_name: str = "cash_register/htmx/hx_game.html"
     action: Callable[[Game], None] = noop
 
-    def post(self, request):
+    def post(self, request) -> HttpResponse:
         name: str = request.session["name"]
         game = get_game_by_gamer_name(name)
         self.action(game)
