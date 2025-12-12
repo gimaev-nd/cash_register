@@ -1,9 +1,7 @@
-from dataclasses import dataclass
-from functools import cached_property
-from random import randint, shuffle
+from typing import Any
 
 from django.db.models.enums import IntegerChoices, TextChoices
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, model_validator
 
 
 class Nominal(IntegerChoices):
@@ -61,35 +59,6 @@ class CartItem(BaseModel):
     amount: int
 
 
-@dataclass
-class Products:
-    products: list[Product]
-
-    def get(self, id: int) -> Product:
-        return self.map[id]
-
-    def get_random(self, count: int | None = None) -> list[Product]:
-        _count: int = count or randint(1, 8)
-        product_ids: set[int] = set()
-        products: list[Product] = []
-        while len(product_ids) < _count:
-            product_index = randint(0, self.count - 1)
-            if product_index in product_ids:
-                continue
-            product_ids.add(product_index)
-            products.append(self.products[product_index])
-        shuffle(products)
-        return products
-
-    @cached_property
-    def count(self):
-        return len(self.products)
-
-    @cached_property
-    def map(self) -> dict[int, Product]:
-        return {p.id: p for p in self.products}
-
-
 class Cart(BaseModel):
     amount: int
     items: list[CartItem]
@@ -134,9 +103,29 @@ class Change(BaseModel):
     cash: CashType
 
 
+class Level(BaseModel):
+    id: int
+    name: str
+
+    @model_validator(mode="before")
+    @classmethod
+    def validate_id(cls, data: Any) -> Any:  # pyright: ignore[reportExplicitAny, reportAny]
+        if isinstance(data, dict):
+            if "id" in data and data["id"] == "default":
+                data["id"] = -1
+        return data  # pyright: ignore[reportUnknownVariableType]
+
+
+class LevelHistory(BaseModel):
+    level: Level
+    buyers: list[BuyerV1]
+
+
 class GameDataV1(BaseModel):
     buyer: BuyerV1
     screen: Screen
     purchase: Purchase
     cash_register: CashRegister
     change: Change
+    level: Level
+    history: list[LevelHistory]

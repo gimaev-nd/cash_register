@@ -22,3 +22,4 @@ DATABASES = {
     }
 }
 MIDDLEWARE.append("django_htmx.middleware.HtmxMiddleware")
+CASH_REGISTER_DATA_DIR = BASE_DIR / "cash_register" / "data"
