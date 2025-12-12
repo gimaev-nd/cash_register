@@ -103,16 +103,33 @@ class Change(BaseModel):
     cash: CashType
 
 
-class Level(BaseModel):
-    id: int
-    name: str
+class LevelConstrain(BaseModel):
+    nominal: int
+    random: bool
+    count: int
 
     @model_validator(mode="before")
     @classmethod
     def validate_id(cls, data: Any) -> Any:  # pyright: ignore[reportExplicitAny, reportAny]
         if isinstance(data, dict):
-            if "id" in data and data["id"] == "default":
-                data["id"] = -1
+            data.setdefault("random", False)
+            data.setdefault("count", 100)
+        return data  # pyright: ignore[reportUnknownVariableType]
+
+
+class Level(BaseModel):
+    index: int
+    name: str
+    buyers: int
+    max_cart_item_count: int
+    constrains: list[LevelConstrain]
+
+    @model_validator(mode="before")
+    @classmethod
+    def validate_id(cls, data: Any) -> Any:  # pyright: ignore[reportExplicitAny, reportAny]
+        if isinstance(data, dict):
+            if "index" in data and data["index"] == "default":
+                data["index"] = -1
         return data  # pyright: ignore[reportUnknownVariableType]
 
 
