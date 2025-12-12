@@ -6,71 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Работа на кассе</title>
         <script src="{% static 'vendor/htmx/js/htmx.min.js' %}"></script>
-        <style>
-            h2 {
-                margin: 16px 0 8px;
-            }
-            .buttons {
-                margin-top: 8px;
-            }
-            .row {
-                display: flex;
-
-                justify-content: space-between;
-                align-items: stretch;
-
-                height: 100%;
-                gap: 4px;
-            }
-            .column {
-                flex-grow: 1;
-                border: 1px solid gray;
-                padding: 0 16px 16px 16px;
-            }
-            #cashe_reader_screen {
-                font-family: monospace;
-                width: 80%;
-                border: 1px solid gray;
-                padding: 16px;
-                margin: 16px auto;
-            }
-            #cashe_reader_screen > .cart_amount {
-                font-size: x-large;
-            }
-            #cashe_reader_screen > table {
-                font-size: small;
-                width: 100%;
-            }
-            #cashe_reader_screen .product_cost {
-                text-align: right;
-            }
-            #cashe_reader_screen .cash_amount {
-                font-size: x-large;
-            }
-            #cashe_reader_screen .change {
-                font-size: x-large;
-                font-weight: bold;
-            }
-            table.cash {
-                border-spacing: 4px;
-            }
-            table.cash td {
-                vertical-align: middle;
-            }
-            td.count {
-                text-align: right;
-            }
-            td.operation {
-                text-align: center;
-            }
-            td.nominal {
-                text-align: right;
-                background-color: rgb(128, 255, 128, 0.3);
-                width: 40px;
-                border: 1px solid rgb(0, 128, 0, 0.4);
-                padding: 1px 4px;
-            }
-        </style>
+        <link rel="stylesheet" href="{% static 'css/style.css' %}" />
     </head>
     <body hx-headers='{"x-csrftoken": "{{ csrf_token }}"}'>
         <div id="game" class="wrapper">
