@@ -1,9 +1,8 @@
 from typing import cast
 
-from cash_register.services.products import all_products
-
 from cash_register.models import Game
-from cash_register.services.repositories.levels import Levels
+from cash_register.services.repositories.levels import levels
+from cash_register.services.repositories.products import all_products
 from cash_register.types import (
     BuyerV1,
     Cart,
@@ -53,7 +52,7 @@ def init_game(game: Game):
             state=CashRegisterState.START, cash=banknotes, amount=calc_cash(banknotes)
         ),
         change=Change(state=ChangeState.START, cash=[]),
-        level=Levels.get(),
+        level=levels.get(),
         history=[],
     )
     game.set_game_data(data)

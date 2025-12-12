@@ -12,9 +12,18 @@ yaml = ruyaml.YAML()
 class Levels:
     def __init__(self, levels: list[Level]) -> None:
         self._levels: list[Level] = levels
+        self._current_level_id: int = 0
 
-    def get(self, level_id: int) -> Level:
-        return self.map[level_id]
+    def get(self, level_id: int | None = None) -> Level:
+        self._current_level_id = level_id or 1
+        level = self.map.get(self._current_level_id) or self.map[-1]
+        self._current_level_id = level.id
+        return level
+
+    def get_next(self) -> Level:
+        if self._current_level_id == -1:
+            return self.get(-1)
+        return self.get(self._current_level_id + 1)
 
     @classmethod
     def load(cls, levels_file: Path | str) -> "Levels":

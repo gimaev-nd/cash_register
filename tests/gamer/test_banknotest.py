@@ -31,16 +31,16 @@ def test_merge_banknotes():
 
 
 def test_sum_as_banknotes():
-    assert sum_as_banknotes(2340) == (
-        {"nominal": Nominal.TEN, "count": 4},
-        {"nominal": Nominal.HUNDRED, "count": 1},
-        {"nominal": Nominal.TWO_HUNDRED, "count": 1},
-        {"nominal": Nominal.THOUSAND, "count": 2},
-    )
+    assert sum_as_banknotes(2340) == [
+        BanknoteCount(nominal=Nominal.TEN, count=4),
+        BanknoteCount(nominal=Nominal.HUNDRED, count=1),
+        BanknoteCount(nominal=Nominal.TWO_HUNDRED, count=1),
+        BanknoteCount(nominal=Nominal.THOUSAND, count=2),
+    ]
 
 
 def test_sum_as_banknotes_100():
-    assert sum_as_banknotes(2340, Nominal.HUNDRED) == (
-        {"nominal": Nominal.TEN, "count": 4},
-        {"nominal": Nominal.HUNDRED, "count": 23},
-    )
+    assert sum_as_banknotes(2340, Nominal.HUNDRED) == [
+        BanknoteCount(nominal=Nominal.TEN, count=4),
+        BanknoteCount(nominal=Nominal.HUNDRED, count=23),
+    ]
