@@ -16,3 +16,4 @@ def test_create_exist_gamer():
     gamer2 = get_gamer("Маша")
 
     assert gamer.id == gamer2.id  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType]
+

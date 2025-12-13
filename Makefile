@@ -15,3 +15,7 @@ del_db:
 	rm -f src/db.sqlite3||echo File not found
 .PHONY: cmm
 cmm: del_db mm
+
+.PHONY: check
+check:
+	uv run ruff check --fix

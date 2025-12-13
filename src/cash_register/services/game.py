@@ -29,7 +29,7 @@ def get_game(gamer: Gamer) -> Game:
     if hasattr(gamer, "game"):
         game = cast(Game, gamer.game)
     else:
-        game = Game.objects.create(gamer=gamer, data={}, version=1)
+        game = Game.objects.create(gamer=gamer, data={})
         init_game(game)
     return game
 
