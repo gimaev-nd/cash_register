@@ -7,6 +7,7 @@ from django.views.generic.base import TemplateView, View
 from cash_register.models import Game
 from cash_register.services.game import (
     ask_payment,
+    check,
     do_scan,
     get_game_by_gamer_name,
     noop,
@@ -84,3 +85,4 @@ scan_products_view = HxGameView.as_view(action=do_scan)
 ask_payment_view = HxGameView.as_view(action=ask_payment)
 open_view = HxGameView.as_view(action=open_cash_register)
 take_cashe_view = HxGameView.as_view(action=take_cashe)
+check_view = HxGameView.as_view(action=check)

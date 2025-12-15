@@ -28,4 +28,5 @@ urlpatterns = [
     path("ask_payment/", cash_register_views.ask_payment_view, name="ask_payment"),
     path("open/", cash_register_views.open_view, name="open"),
     path("take/", cash_register_views.take_cashe_view, name="take_cashe"),
+    path("check/", cash_register_views.check_view, name="check"),
 ]
