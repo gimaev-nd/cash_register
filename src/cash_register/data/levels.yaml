@@ -1,7 +1,7 @@
 levels:
     - index: 1
       name: Без сдачи
-      buyers: 2
+      buyer_count: 2
       max_cart_item_count: 1
       constrains:
           - nominal: 100
@@ -10,7 +10,7 @@ levels:
             count: 2
     - index: default
       name: Сложный
-      buyers: 20
+      buyer_count: 20
       max_cart_item_count: 8
       constrains:
           - nominal: -1

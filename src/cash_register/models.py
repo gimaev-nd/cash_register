@@ -1,6 +1,6 @@
 from django.db import models
 
-from cash_register.types import GameDataV1
+from cash_register.types import GameData
 
 
 class Game(models.Model):
@@ -9,9 +9,9 @@ class Game(models.Model):
     )
     data = models.JSONField("Данные игры")
 
-    def get_game_data(self) -> GameDataV1:
-        return GameDataV1.model_validate(self.data)
+    def get_game_data(self) -> GameData:
+        return GameData.model_validate(self.data)
 
-    def set_game_data(self, data: GameDataV1) -> None:
+    def set_game_data(self, data: GameData) -> None:
         self.data = data.model_dump()
         self.save()

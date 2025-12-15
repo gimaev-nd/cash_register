@@ -72,7 +72,7 @@ class BanknoteCount(BaseModel):
 CashType = list[BanknoteCount]
 
 
-class BuyerV1(BaseModel):
+class Buyer(BaseModel):
     number: int
     cart: Cart
     gave_money: int
@@ -84,6 +84,10 @@ class Purchase(BaseModel):
     state: PurchaseState
     cash: CashType
 
+    def reset_state(self):
+        self.state = PurchaseState.START
+        self.cash = []
+
 
 class Screen(BaseModel):
     state: ScreenState
@@ -91,16 +95,34 @@ class Screen(BaseModel):
     cash_amount: int
     change: int
 
+    def reset_state(self):
+        self.state = ScreenState.START
+        self.cash_amount = 0
+        self.product_cost = 0
+        self.change = 0
+
 
 class CashRegister(BaseModel):
     state: CashRegisterState
     cash: CashType
-    amount: int
+
+    def reset_state(self):
+        self.state = CashRegisterState.START
+
+    @property
+    def amount(self) -> int:
+        from cash_register.services.banknotes import calc_cash
+
+        return calc_cash(self.cash)
 
 
 class Change(BaseModel):
     state: ChangeState
     cash: CashType
+
+    def reset_state(self):
+        self.state = ChangeState.START
+        self.cash = []
 
 
 class LevelConstrain(BaseModel):
@@ -120,7 +142,7 @@ class LevelConstrain(BaseModel):
 class Level(BaseModel):
     index: int
     name: str
-    buyers: int
+    buyer_count: int
     max_cart_item_count: int
     constrains: list[LevelConstrain]
 
@@ -132,17 +154,43 @@ class Level(BaseModel):
                 data["index"] = -1
         return data  # pyright: ignore[reportUnknownVariableType]
 
+    def get_buyer(self, number: int):
+        from cash_register.services.repositories.products import all_products
+
+        cart_products = all_products.get_random(self.max_cart_item_count)
+        items: list[CartItem] = []
+        amount: int = 0
+        for product in cart_products:
+            cart_item = CartItem(product=product, count=1, amount=product.price)
+            items.append(cart_item)
+            amount += cart_item.amount
+        cart = Cart(amount=amount, items=items)
+        return Buyer(number=number, cart=cart, gave_money=100, got_money=0, cash=[])
+
 
 class LevelHistory(BaseModel):
     level: Level
-    buyers: list[BuyerV1]
+    buyers: list[Buyer]
+
+    def get_buyer(self):
+        number = len(self.buyers) + 1
+        return self.level.get_buyer(number)
 
 
-class GameDataV1(BaseModel):
-    buyer: BuyerV1
+class GameData(BaseModel):
+    buyer: Buyer
     screen: Screen
     purchase: Purchase
     cash_register: CashRegister
     change: Change
-    level: Level
+    level_history: LevelHistory
     history: list[LevelHistory]
+
+    def reset_state(self):
+        self.screen.reset_state()
+        self.purchase.reset_state()
+        self.cash_register.reset_state()
+        self.change.reset_state()
+
+    def new_level(self):
+        pass

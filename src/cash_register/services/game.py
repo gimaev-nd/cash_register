@@ -4,7 +4,7 @@ from cash_register.models import Game
 from cash_register.services.repositories.levels import levels
 from cash_register.services.repositories.products import all_products
 from cash_register.types import (
-    BuyerV1,
+    Buyer,
     Cart,
     CartItem,
     CashRegister,
@@ -12,7 +12,8 @@ from cash_register.types import (
     CashType,
     Change,
     ChangeState,
-    GameDataV1,
+    GameData,
+    LevelHistory,
     Nominal,
     Purchase,
     PurchaseState,
@@ -44,15 +45,15 @@ def init_game(game: Game):
     product = all_products.get_random(1)[0]
     cart_Item = CartItem(product=product, count=1, amount=product.price)
     cart = Cart(amount=cart_Item.amount, items=[cart_Item])
-    data = GameDataV1(
+    data = GameData(
         purchase=Purchase(state=PurchaseState.START, cash=[]),
-        buyer=BuyerV1(number=1, cart=cart, gave_money=100, got_money=0, cash=[]),
+        buyer=Buyer(number=1, cart=cart, gave_money=100, got_money=0, cash=[]),
         screen=Screen(state=ScreenState.START, product_cost=0, cash_amount=0, change=0),
         cash_register=CashRegister(
             state=CashRegisterState.START, cash=banknotes, amount=calc_cash(banknotes)
         ),
         change=Change(state=ChangeState.START, cash=[]),
-        level=levels.get(),
+        level_history=LevelHistory(level=levels.get(), buyers=[]),
         history=[],
     )
     game.set_game_data(data)
@@ -112,6 +113,30 @@ def take_cashe(game: Game):
     data.screen.change = data.screen.cash_amount - data.screen.product_cost
     data.purchase.cash = []
     game.set_game_data(data)
+
+
+def reset_state(game: Game):
+    data = game.get_game_data()
+    data.reset_state()
+    game.set_game_data(data)
+
+
+def check(game: Game):
+    data = game.get_game_data()
+    data.buyer.got_money = calc_cash(data.change.cash)
+    data.change.cash = []
+    data.level_history.buyers.append(data.buyer)
+    level = data.level_history.level
+    if level.buyer_count == data.buyer:
+        data.new_level()
+    else:
+        data.buyer = data.level_history.get_buyer()
+    data.reset_state()
+    game.set_game_data(data)
+
+
+def new_level(game: Game):
+    pass
 
 
 def noop(game: Game):
