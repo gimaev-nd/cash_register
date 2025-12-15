@@ -1,3 +1,7 @@
+.PHONY: help
+help:
+	echo m1, m2, mm, cmm, check, test
+
 .PHONY: m1
 m1:
 	src/manage.py makemigrations
