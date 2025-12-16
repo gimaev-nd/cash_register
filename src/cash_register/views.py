@@ -1,4 +1,4 @@
-from typing import Any, Callable, final
+from typing import Any, Callable, cast, final
 
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
@@ -10,10 +10,12 @@ from cash_register.services.game import (
     check,
     do_scan,
     get_game_by_gamer_name,
+    move_cash,
     noop,
     open_cash_register,
     take_cashe,
 )
+from cash_register.types import CashName, Nominal
 
 
 # Create your views here.
@@ -47,7 +49,7 @@ class Meet(TemplateView):
 
 @final
 class GameView(TemplateView):
-    template_name = "cash_register/game.html"
+    template_name = "cash_register/game_page.html"
     game: Game
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
@@ -81,8 +83,26 @@ class HxGameView(View):
         return render(request, self.template_name, context=context)
 
 
+class HxMoveCacheView(View):
+    template_name: str = "cash_register/htmx/hx_game.html"
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        name = cast(str, request.session["name"])
+        cash_src = CashName(request.POST["cash_src"])
+        cash_dst = CashName(request.POST["cash_dst"])
+        nominal = Nominal(request.POST["nominal"])
+        game = get_game_by_gamer_name(name)
+        move_cash(game, cash_src, cash_dst, nominal)
+        context = {
+            "name": name,
+            "game": game.get_game_data(),
+        }
+        return render(request, self.template_name, context=context)
+
+
 scan_products_view = HxGameView.as_view(action=do_scan)
 ask_payment_view = HxGameView.as_view(action=ask_payment)
 open_view = HxGameView.as_view(action=open_cash_register)
 take_cashe_view = HxGameView.as_view(action=take_cashe)
+check_view = HxGameView.as_view(action=check)
 check_view = HxGameView.as_view(action=check)

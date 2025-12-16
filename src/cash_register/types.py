@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Any
 
 from django.db.models.enums import IntegerChoices, TextChoices
@@ -24,6 +25,13 @@ class CashRegisterState(TextChoices):
     OPEN = "open", "Открыто"
     CHANGE_MONEY = "change_money", "Размен"
     INCREASE = "increase", "Укрупнить"
+
+
+class CashName(TextChoices):
+    BUYER = "buyer", "Покупатель"
+    PURCHASE = "purchase", "Оплата"
+    CASH_REGISTER = "cash_register", "Касса"
+    CHANGE = "change", "Сдача"
 
 
 class ScreenState(TextChoices):
@@ -69,7 +77,8 @@ class BanknoteCount(BaseModel):
     nominal: Nominal
 
 
-CashType = list[BanknoteCount]
+Cash = list[BanknoteCount]
+CashSeq = Sequence[BanknoteCount]
 
 
 class Buyer(BaseModel):
@@ -77,12 +86,12 @@ class Buyer(BaseModel):
     cart: Cart
     gave_money: int
     got_money: int
-    cash: CashType
+    cash: Cash
 
 
 class Purchase(BaseModel):
     state: PurchaseState
-    cash: CashType
+    cash: Cash
 
     def reset_state(self):
         self.state = PurchaseState.START
@@ -104,7 +113,7 @@ class Screen(BaseModel):
 
 class CashRegister(BaseModel):
     state: CashRegisterState
-    cash: CashType
+    cash: Cash
 
     def reset_state(self):
         self.state = CashRegisterState.START
@@ -118,7 +127,7 @@ class CashRegister(BaseModel):
 
 class Change(BaseModel):
     state: ChangeState
-    cash: CashType
+    cash: Cash
 
     def reset_state(self):
         self.state = ChangeState.START

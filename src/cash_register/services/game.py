@@ -4,12 +4,14 @@ from cash_register.models import Game
 from cash_register.services.repositories.levels import levels
 from cash_register.services.repositories.products import all_products
 from cash_register.types import (
+    BanknoteCount,
     Buyer,
     Cart,
     CartItem,
+    CashName,
     CashRegister,
     CashRegisterState,
-    CashType,
+    Cash,
     Change,
     ChangeState,
     GameData,
@@ -23,7 +25,13 @@ from cash_register.types import (
 from users.models import Gamer
 from users.services.gamer import get_gamer
 
-from .banknotes import DEFAULT_BANKNOTES, calc_cash, merge_banknotes, sum_as_banknotes
+from .banknotes import (
+    DEFAULT_BANKNOTES,
+    calc_cash,
+    cash_difference,
+    cash_sum,
+    sum_as_banknotes,
+)
 
 
 def get_game(gamer: Gamer) -> Game:
@@ -49,9 +57,7 @@ def init_game(game: Game):
         purchase=Purchase(state=PurchaseState.START, cash=[]),
         buyer=Buyer(number=1, cart=cart, gave_money=100, got_money=0, cash=[]),
         screen=Screen(state=ScreenState.START, product_cost=0, cash_amount=0, change=0),
-        cash_register=CashRegister(
-            state=CashRegisterState.START, cash=banknotes, amount=calc_cash(banknotes)
-        ),
+        cash_register=CashRegister(state=CashRegisterState.START, cash=banknotes),
         change=Change(state=ChangeState.START, cash=[]),
         level_history=LevelHistory(level=levels.get(), buyers=[]),
         history=[],
@@ -90,7 +96,7 @@ def ask_payment(game: Game):
     game.set_game_data(data)
 
 
-def get_buyer_cash(game: Game) -> CashType:
+def get_buyer_cash(game: Game) -> Cash:
     data = game.get_game_data()
     buyer = data.buyer
     return sum_as_banknotes(buyer.gave_money)
@@ -105,9 +111,7 @@ def open_cash_register(game: Game):
 def take_cashe(game: Game):
     data = game.get_game_data()
     data.purchase.state = PurchaseState.PAID
-    data.cash_register.cash = merge_banknotes(
-        data.cash_register.cash, data.purchase.cash
-    )
+    data.cash_register.cash = cash_sum(data.cash_register.cash, data.purchase.cash)
     data.screen.state = ScreenState.CASH
     data.screen.cash_amount = calc_cash(data.purchase.cash)
     data.screen.change = data.screen.cash_amount - data.screen.product_cost
@@ -132,6 +136,35 @@ def check(game: Game):
     else:
         data.buyer = data.level_history.get_buyer()
     data.reset_state()
+    game.set_game_data(data)
+
+
+def get_cash(game_data: GameData, cash_name: CashName) -> Cash:
+    if cash_name == CashName.PURCHASE:
+        return game_data.purchase.cash
+    if cash_name == CashName.CASH_REGISTER:
+        return game_data.cash_register.cash
+    if cash_name == CashName.CHANGE:
+        return game_data.change.cash
+    if cash_name == CashName.BUYER:
+        return game_data.buyer.cash
+
+
+def move_cash(
+    game: Game,
+    cash_name_src: CashName,
+    cash_name_dst: CashName,
+    nominal: Nominal,
+    count: int = 1,
+) -> None:
+    data = game.get_game_data()
+    cash_src = get_cash(data, cash_name_src)
+    cash_dst = get_cash(data, cash_name_dst)
+    delta_cash = [BanknoteCount(nominal=nominal, count=count)]
+    cash_src.clear()
+    cash_src.extend(cash_difference(cash_src, delta_cash))
+    cash_dst.clear()
+    cash_dst.extend(cash_sum(cash_dst, delta_cash))
     game.set_game_data(data)
 
 
