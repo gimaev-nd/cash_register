@@ -106,6 +106,12 @@ class CashState(BaseModel):
         self.right = False
         self.left = False
 
+    def get_count_by_nominal(self, nominal: int | Nominal) -> int:
+        for banknote_count in self.cash:
+            if banknote_count.nominal == nominal:
+                return banknote_count.count
+        return 0
+
 
 class Purchase(BaseModel):
     state: PurchaseState

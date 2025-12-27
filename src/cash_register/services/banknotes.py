@@ -56,7 +56,7 @@ def merge_banknotes(
             )
             banknotes.append(new_banknote_count)
         elif banknote_2 and operation == sub:
-            raise Exception("Неожиданое поведение")
+            raise Exception("Неожиданое поведение", banknote_2, operation)
         elif banknote_2:
             new_banknote_count = BanknoteCount(
                 count=banknote_2.count, nominal=banknote_2.nominal
@@ -65,15 +65,11 @@ def merge_banknotes(
     return banknotes
 
 
-def cash_by_sum(
-    cash_1: CashSeq, cash_2: CashSeq
-) -> Cash:
+def cash_by_sum(cash_1: CashSeq, cash_2: CashSeq) -> Cash:
     return merge_banknotes(cash_1, cash_2, add)
 
 
-def cash_difference(
-    cash_1: CashSeq, cash_2: CashSeq
-) -> Cash:
+def cash_difference(cash_1: CashSeq, cash_2: CashSeq) -> Cash:
     return merge_banknotes(cash_1, cash_2, sub)
 
 

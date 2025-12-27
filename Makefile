@@ -30,4 +30,4 @@ check:
 
 .PHONY: test
 test:
-	pytest --lf --cov --cov-report html
+	pytest -vv --lf --cov --cov-report html

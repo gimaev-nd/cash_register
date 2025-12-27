@@ -90,7 +90,7 @@ class HxMoveCacheView(View):
         name = cast(str, request.session["name"])
         cash_src = CashName(request.POST["cash_src"])
         cash_dst = CashName(request.POST["cash_dst"])
-        nominal = Nominal(request.POST["nominal"])
+        nominal = Nominal(int(request.POST["nominal"]))
         game = get_game_by_gamer_name(name)
         move_cash(game, cash_src, cash_dst, nominal)
         context = {

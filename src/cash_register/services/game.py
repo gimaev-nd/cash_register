@@ -1,4 +1,4 @@
-from typing import cast
+from typing import Callable, cast
 
 from cash_register.models import Game
 from cash_register.services.repositories.levels import levels
@@ -144,16 +144,28 @@ def check(game: Game):
     game.set_game_data(data)
 
 
-def get_cash(game_data: GameData, cash_name: CashName) -> Cash:
+def get_cash_state(game_data: GameData, cash_name: CashName) -> CashState:
     if cash_name == CashName.PURCHASE:
-        return game_data.purchase.cash_state.cash
+        return game_data.purchase.cash_state
     if cash_name == CashName.CASH_REGISTER:
-        return game_data.cash_register.cash_state.cash
+        return game_data.cash_register.cash_state
     if cash_name == CashName.CHANGE:
-        return game_data.change.cash_state.cash
+        return game_data.change.cash_state
+    raise Exception("Неожиданое поведение", game_data, cash_name)
+
+
+def get_cash(game_data: GameData, cash_name: CashName) -> Cash:
+    if cash_name in (CashName.PURCHASE, CashName.CASH_REGISTER, CashName.CHANGE):
+        return get_cash_state(game_data, cash_name).cash
     if cash_name == CashName.BUYER:
         return game_data.buyer.cash
-    raise Exception("Неожиданое поведение")
+    raise Exception("Неожиданое поведение", game_data, cash_name)
+
+
+def _move_cash(cash: Cash, delta_cash: Cash, action: Callable):
+    changed_cash = action(cash, delta_cash)
+    cash.clear()
+    cash.extend(x for x in changed_cash if x.count)
 
 
 def move_cash(
@@ -167,10 +179,8 @@ def move_cash(
     cash_src = get_cash(data, cash_name_src)
     cash_dst = get_cash(data, cash_name_dst)
     delta_cash = [BanknoteCount(nominal=nominal, count=count)]
-    cash_src.clear()
-    cash_src.extend(cash_difference(cash_src, delta_cash))
-    cash_dst.clear()
-    cash_dst.extend(cash_by_sum(cash_dst, delta_cash))
+    _move_cash(cash_src, delta_cash, cash_difference)
+    _move_cash(cash_dst, delta_cash, cash_by_sum)
     game.set_game_data(data)
 
 
