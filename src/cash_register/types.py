@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from typing import Any
 
 from django.db.models.enums import IntegerChoices, TextChoices
-from pydantic import BaseModel, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class Nominal(IntegerChoices):
@@ -89,13 +89,31 @@ class Buyer(BaseModel):
     cash: Cash
 
 
+class CashState(BaseModel):
+    cash: Cash = Field(default_factory=list)
+    up: bool = False
+    down: bool = False
+    right: bool = False
+    left: bool = False
+
+    def reset(self):
+        self.cash = []
+        self.reset_buttons()
+
+    def reset_buttons(self):
+        self.up = False
+        self.down = False
+        self.right = False
+        self.left = False
+
+
 class Purchase(BaseModel):
     state: PurchaseState
-    cash: Cash
+    cash_state: CashState
 
     def reset_state(self):
         self.state = PurchaseState.START
-        self.cash = []
+        self.cash_state.reset()
 
 
 class Screen(BaseModel):
@@ -113,25 +131,26 @@ class Screen(BaseModel):
 
 class CashRegister(BaseModel):
     state: CashRegisterState
-    cash: Cash
+    cash_state: CashState
 
     def reset_state(self):
         self.state = CashRegisterState.START
+        self.cash_state.reset_buttons()
 
     @property
     def amount(self) -> int:
-        from cash_register.services.banknotes import calc_cash
+        from cash_register.services.banknotes import cash_sum
 
-        return calc_cash(self.cash)
+        return cash_sum(self.cash_state.cash)
 
 
 class Change(BaseModel):
     state: ChangeState
-    cash: Cash
+    cash_state: CashState
 
     def reset_state(self):
         self.state = ChangeState.START
-        self.cash = []
+        self.cash_state.reset()
 
 
 class LevelConstrain(BaseModel):

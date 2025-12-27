@@ -8,10 +8,11 @@ from cash_register.types import (
     Buyer,
     Cart,
     CartItem,
+    Cash,
     CashName,
     CashRegister,
     CashRegisterState,
-    Cash,
+    CashState,
     Change,
     ChangeState,
     GameData,
@@ -27,7 +28,7 @@ from users.services.gamer import get_gamer
 
 from .banknotes import (
     DEFAULT_BANKNOTES,
-    calc_cash,
+    cash_by_sum,
     cash_difference,
     cash_sum,
     sum_as_banknotes,
@@ -36,7 +37,7 @@ from .banknotes import (
 
 def get_game(gamer: Gamer) -> Game:
     if hasattr(gamer, "game"):
-        game = cast(Game, gamer.game)
+        game = cast(Game, gamer.game)  # pyright: ignore[reportAttributeAccessIssue]
     else:
         game = Game.objects.create(gamer=gamer, data={})
         init_game(game)
@@ -49,16 +50,18 @@ def get_game_by_gamer_name(name: str) -> Game:
 
 
 def init_game(game: Game):
-    banknotes = DEFAULT_BANKNOTES
+    banknotes = DEFAULT_BANKNOTES.copy()
     product = all_products.get_random(1)[0]
     cart_Item = CartItem(product=product, count=1, amount=product.price)
     cart = Cart(amount=cart_Item.amount, items=[cart_Item])
     data = GameData(
-        purchase=Purchase(state=PurchaseState.START, cash=[]),
+        purchase=Purchase(state=PurchaseState.START, cash_state=CashState()),
         buyer=Buyer(number=1, cart=cart, gave_money=100, got_money=0, cash=[]),
         screen=Screen(state=ScreenState.START, product_cost=0, cash_amount=0, change=0),
-        cash_register=CashRegister(state=CashRegisterState.START, cash=banknotes),
-        change=Change(state=ChangeState.START, cash=[]),
+        cash_register=CashRegister(
+            state=CashRegisterState.START, cash_state=CashState(cash=banknotes)
+        ),
+        change=Change(state=ChangeState.START, cash_state=CashState()),
         level_history=LevelHistory(level=levels.get(), buyers=[]),
         history=[],
     )
@@ -92,7 +95,7 @@ def do_scan(game: Game):
 def ask_payment(game: Game):
     data = game.get_game_data()
     data.purchase.state = PurchaseState.PAYMENT
-    data.purchase.cash = get_buyer_cash(game)
+    data.purchase.cash_state.cash = get_buyer_cash(game)
     game.set_game_data(data)
 
 
@@ -111,11 +114,13 @@ def open_cash_register(game: Game):
 def take_cashe(game: Game):
     data = game.get_game_data()
     data.purchase.state = PurchaseState.PAID
-    data.cash_register.cash = cash_sum(data.cash_register.cash, data.purchase.cash)
+    data.cash_register.cash_state.cash = cash_by_sum(
+        data.cash_register.cash_state.cash, data.purchase.cash_state.cash
+    )
     data.screen.state = ScreenState.CASH
-    data.screen.cash_amount = calc_cash(data.purchase.cash)
+    data.screen.cash_amount = cash_sum(data.purchase.cash_state.cash)
     data.screen.change = data.screen.cash_amount - data.screen.product_cost
-    data.purchase.cash = []
+    data.purchase.cash_state.reset()
     game.set_game_data(data)
 
 
@@ -127,8 +132,8 @@ def reset_state(game: Game):
 
 def check(game: Game):
     data = game.get_game_data()
-    data.buyer.got_money = calc_cash(data.change.cash)
-    data.change.cash = []
+    data.buyer.got_money = cash_sum(data.change.cash_state.cash)
+    data.change.cash_state.reset()
     data.level_history.buyers.append(data.buyer)
     level = data.level_history.level
     if level.buyer_count == data.buyer:
@@ -141,13 +146,14 @@ def check(game: Game):
 
 def get_cash(game_data: GameData, cash_name: CashName) -> Cash:
     if cash_name == CashName.PURCHASE:
-        return game_data.purchase.cash
+        return game_data.purchase.cash_state.cash
     if cash_name == CashName.CASH_REGISTER:
-        return game_data.cash_register.cash
+        return game_data.cash_register.cash_state.cash
     if cash_name == CashName.CHANGE:
-        return game_data.change.cash
+        return game_data.change.cash_state.cash
     if cash_name == CashName.BUYER:
         return game_data.buyer.cash
+    raise Exception("Неожиданое поведение")
 
 
 def move_cash(
@@ -164,7 +170,7 @@ def move_cash(
     cash_src.clear()
     cash_src.extend(cash_difference(cash_src, delta_cash))
     cash_dst.clear()
-    cash_dst.extend(cash_sum(cash_dst, delta_cash))
+    cash_dst.extend(cash_by_sum(cash_dst, delta_cash))
     game.set_game_data(data)
 
 

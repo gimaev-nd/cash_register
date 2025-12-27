@@ -29,8 +29,8 @@ def change_banknotes(banknotes: Cash, nominal: Nominal) -> Cash:
         return banknotes
     new_banknotes: Cash = [BanknoteCount(count=-1, nominal=nominal)]
     new_banknotes.extend(sum_as_banknotes(nominal, nominal.get_prev()))
-    assert calc_cash(new_banknotes) == 0
-    return cash_sum(banknotes, new_banknotes)
+    assert cash_sum(new_banknotes) == 0
+    return cash_by_sum(banknotes, new_banknotes)
 
 
 def merge_banknotes(
@@ -65,7 +65,7 @@ def merge_banknotes(
     return banknotes
 
 
-def cash_sum(
+def cash_by_sum(
     cash_1: CashSeq, cash_2: CashSeq
 ) -> Cash:
     return merge_banknotes(cash_1, cash_2, add)
@@ -83,7 +83,7 @@ def banknotes_as_dict(
     return {bn.nominal: bn for bn in banknotes if bn.count}
 
 
-def calc_cash(banknotes: CashSeq) -> int:
+def cash_sum(banknotes: CashSeq) -> int:
     summ = 0
     for banknote in banknotes:
         summ += banknote.count * banknote.nominal

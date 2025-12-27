@@ -33,6 +33,7 @@ DJANGO_SETTINGS_MODULE = "config.settings"
 [tool.basedpyright]
 extraPaths = [ "src" ]
 reportImplicitOverride = false
+reportUnknownMemberType = false
 
 [tool.mypy]
 plugins = ["mypy_django_plugin.main"]

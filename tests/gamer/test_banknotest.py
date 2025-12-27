@@ -2,7 +2,7 @@ import pytest
 
 from cash_register.services.banknotes import (
     DEFAULT_BANKNOTES,
-    calc_cash,
+    cash_sum,
     change_banknotes,
     merge_banknotes,
     sum_as_banknotes,
@@ -19,7 +19,7 @@ def test_nominal():
 def test_change(nominal: Nominal):
     banknotes_before: Cash = [BanknoteCount(count=1, nominal=nominal)]
     banknotes_after = change_banknotes(banknotes_before, nominal)
-    assert calc_cash(banknotes_before) == calc_cash(banknotes_after)
+    assert cash_sum(banknotes_before) == cash_sum(banknotes_after)
 
 
 def test_merge_banknotes():
@@ -27,7 +27,7 @@ def test_merge_banknotes():
     b2 = DEFAULT_BANKNOTES[:-2]
     banknotes = merge_banknotes(b1, b2)
 
-    assert calc_cash(banknotes) == calc_cash(b1) + calc_cash(b2)
+    assert cash_sum(banknotes) == cash_sum(b1) + cash_sum(b2)
 
 
 def test_sum_as_banknotes():
