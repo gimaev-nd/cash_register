@@ -1,0 +1,14 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Работа на кассе</title>
+        <script src="{% static 'vendor/htmx/js/htmx.min.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    </head>
+    <body hx-headers='{"x-csrftoken": "{{ csrf_token }}"}'>
+        <div id="game" class="wrapper" hx-target="#game">{% include 'cash_register/game.html' %}</div>
+    </body>
+</html>

@@ -1,16 +1,15 @@
-{% load static %}
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Работа на кассе</title>
-        <script src="{% static 'vendor/htmx/js/htmx.min.js' %}"></script>
-        <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-    </head>
-    <body hx-headers='{"x-csrftoken": "{{ csrf_token }}"}'>
-        <div id="game" class="wrapper">
-            {% include 'cash_register/htmx/hx_game.html' %}
-        </div>
-    </body>
-</html>
+<h1>
+    {% if game.level_history.level.index != -1 %} Уровень
+    "{{game.level_history.level.name}}"{% endif %}. Покупатель {# ----------- #}
+    {{ game.buyer.number }} из {{ game.level_history.level.buyer_count }}
+</h1>
+
+<h2></h2>
+<div class="row">
+    <div id="cashe_reader_screen">
+        {% include "cash_register/screen.html" %}
+    </div>
+</div>
+<div class="row" id="cashes">{% include "cash_register/cashes.html" %}</div>
+<div class="row"></div>
+<div id="debug">{% include "cash_register/debug.html" %}</div>

@@ -1,8 +1,7 @@
-{% with screen=game.screen purchase=game.purchase %} {# ------------------- #}
-{% if screen.state == "start" %}
-<button hx-post="/scan/" hx-target="#game">Просканировать товары</button>
+{% with screen=game.screen purchase=game.purchase %} {# ------------------- #} {% if screen.state == "start" %}
+<button hx-post="{% url 'scan' %}">Просканировать товары</button>
 {% elif purchase.state == "payment" and game.cash_register.state == "start"%}
-<button hx-post="/open/" hx-target="#game">Открыть ящик</button>
+<button hx-post="{% url 'open' %}">Открыть ящик</button>
 {% elif purchase.state == "paid" %}
-<button hx-post="/check/" hx-target="#game">Выдать чек</button>
+<button hx-post="{% url 'check' %}">Выдать чек</button>
 {% endif %} {% endwith %}

@@ -1,3 +1,14 @@
-<table class="cash">
-    {% for money in cash %}<c-money :money="money" />{% endfor %}
-</table>
+<form id="{{form_id}}-cash" hx-params="*">
+    <table class="cash">
+        {% for money in cash_state.cash %}
+        <tr>
+            <c-money :money="money" button="button" />
+        </tr>
+        {% endfor %}
+    </table>
+    {% if cash_src %}
+    <input type="hidden" name="cash_src" value="{{cash_src}}" />
+    {% endif %} {% if cash_src %}
+    <input type="hidden" name="cash_dst" value="{{cash_dst}}" />
+    {% endif %}
+</form>
