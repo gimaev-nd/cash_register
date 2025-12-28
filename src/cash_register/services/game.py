@@ -108,6 +108,8 @@ def get_buyer_cash(game: Game) -> Cash:
 def open_cash_register(game: Game):
     data = game.get_game_data()
     data.cash_register.state = CashRegisterState.OPEN
+    data.cash_register.cash_state.right = True
+    data.change.cash_state.left = True
     game.set_game_data(data)
 
 
@@ -182,6 +184,15 @@ def move_cash(
     _move_cash(cash_src, delta_cash, cash_difference)
     _move_cash(cash_dst, delta_cash, cash_by_sum)
     game.set_game_data(data)
+
+
+def move_cash_up(
+    game: Game,
+    cash_name_src: CashName,
+    nominal: Nominal,
+    count: int = 1,
+) -> None:
+    pass
 
 
 def new_level(game: Game):

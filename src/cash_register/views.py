@@ -11,6 +11,7 @@ from cash_register.services.game import (
     do_scan,
     get_game_by_gamer_name,
     move_cash,
+    move_cash_up,
     noop,
     open_cash_register,
     take_cashe,
@@ -83,6 +84,14 @@ class HxGameView(View):
         return render(request, self.template_name, context=context)
 
 
+scan_products_view = HxGameView.as_view(action=do_scan)
+ask_payment_view = HxGameView.as_view(action=ask_payment)
+open_view = HxGameView.as_view(action=open_cash_register)
+take_cashe_view = HxGameView.as_view(action=take_cashe)
+check_view = HxGameView.as_view(action=check)
+# up_view = HxGameView.as_view(action=up)
+
+
 class HxMoveCacheView(View):
     template_name: str = "cash_register/htmx/hx_game.html"
 
@@ -99,10 +108,17 @@ class HxMoveCacheView(View):
         }
         return render(request, self.template_name, context=context)
 
+class HxMoveCacheUpView(View):
+    template_name: str = "cash_register/htmx/hx_game.html"
 
-scan_products_view = HxGameView.as_view(action=do_scan)
-ask_payment_view = HxGameView.as_view(action=ask_payment)
-open_view = HxGameView.as_view(action=open_cash_register)
-take_cashe_view = HxGameView.as_view(action=take_cashe)
-check_view = HxGameView.as_view(action=check)
-check_view = HxGameView.as_view(action=check)
+    def post(self, request: HttpRequest) -> HttpResponse:
+        name = cast(str, request.session["name"])
+        cash_src = CashName(request.POST["cash_src"])
+        nominal = Nominal(int(request.POST["nominal"]))
+        game = get_game_by_gamer_name(name)
+        move_cash_up(game, cash_src, nominal)
+        context = {
+            "name": name,
+            "game": game.get_game_data(),
+        }
+        return render(request, self.template_name, context=context)

@@ -1,14 +1,24 @@
-<form id="{{form_id}}-cash" hx-params="*">
-    <table class="cash">
-        {% for money in cash_state.cash %}
-        <tr>
-            <c-money :money="money" button="button" />
-        </tr>
-        {% endfor %}
-    </table>
-    {% if cash_src %}
-    <input type="hidden" name="cash_src" value="{{cash_src}}" />
-    {% endif %} {% if cash_src %}
-    <input type="hidden" name="cash_dst" value="{{cash_dst}}" />
-    {% endif %}
-</form>
+<table class="cash">
+    {% for money in cash_state.cash %}
+    <tr>
+        <td class="nominal">{{money.nominal}}</td>
+        <td class="operation">&nbsp;⨯&nbsp;</td>
+        <td class="count">{{money.count}}</td>
+        {% if cash_state.left %}
+        <td>
+            <button hx-post="{% url 'move_cash' %}"
+                hx-vals='{ "nominal":{{money.nominal}}, "cash_src":"{{cash_src}}", "cash_dst":"{{left_cash}}" }'
+            >⬅</button>
+        </td>
+        {% endif %}
+        {% if cash_state.right %}
+        <td>
+            <button
+                hx-post="{% url 'move_cash' %}"
+                hx-vals='{ "nominal":{{money.nominal}}, "cash_src":"{{cash_src}}", "cash_dst":"{{right_cash}}" }'
+            >➡</button>
+        </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>

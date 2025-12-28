@@ -1,3 +1,7 @@
 {% if game.cash_register.state == "open" %}
-<c-cash :cash_state="game.cash_register.cash_state" cash_src="cash_register" cash_dst="change" />
+<c-cash
+    :cash_state="game.cash_register.cash_state"
+    cash_src="cash_register"
+    right_cash="change"
+     />
 {% endif %}

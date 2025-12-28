@@ -1,8 +1,0 @@
-<td class="nominal">{{money.nominal}}</td>
-<td class="operation">&nbsp;⨯&nbsp;</td>
-<td class="count">{{money.count}}</td>
-{% if button != "after" %}
-<td class="count">
-    <button hx-post="{% url 'move_cash' %}" hx-vals='{ "nominal":{{money.nominal}} }'>➡</button>
-</td>
-{% endif %}
