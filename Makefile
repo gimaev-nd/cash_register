@@ -1,6 +1,13 @@
 .PHONY: help
 help:
-	echo m1, m2, mm, cmm, check, test
+	# HELP
+	#   make m1 - makemigrations
+	#   make m2 - migrate
+	#   make mm - makemigrations and migrate
+	#   make del_db - delete db
+	#   make cmm - delete db, makemigrations and migrate
+	#   make check - run linters
+	#   make test - run pytest
 
 .PHONY: m1
 m1:

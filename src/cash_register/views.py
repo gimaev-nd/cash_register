@@ -1,6 +1,6 @@
-from typing import Any, Callable, cast, final
+from typing import TYPE_CHECKING, Any, Callable, cast, final
 
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseBase
 from django.shortcuts import redirect, render
 from django.views.generic.base import TemplateView, View
 
@@ -16,12 +16,44 @@ from cash_register.services.game import (
     open_cash_register,
     take_cashe,
 )
-from cash_register.types import CashName, Nominal
+from cash_register.types import CashName, Nominal, Page
+
+
+class GameMixin(View if TYPE_CHECKING else object):
+    page: Page = Page.WELCOME
+
+    def __init__(self, *args, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.game: Game | None = None
+        self.gamer_name: str | None = None
+
+    def dispatch(
+        self, request: HttpRequest, *args: Any, **kwargs: Any
+    ) -> HttpResponseBase:
+        print("!" * 8, [*request.META])
+        if request.method != "GET":
+            return super().dispatch(request, *args, **kwargs)
+        page = self.page
+        if "name" not in request.session or "game_id" not in request.session:
+            page = Page.WELCOME
+            if page != self.page:
+                return redirect(page.view_name)
+        self.gamer_name = request.session.get("name")
+
+        if page == self.page:
+            return super().dispatch(request, *args, **kwargs)
+        return redirect(page.view_name)
+
+    def create_game(self, request: HttpRequest, name: str) -> Game:
+        game = get_game_by_gamer_name(name)
+        request.session["name"] = name
+        request.session["game_id"] = game.pk
+        return game
 
 
 # Create your views here.
 @final
-class Meet(TemplateView):
+class Meet(GameMixin, TemplateView):
     template_name = "cash_register/index.html"
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
@@ -107,6 +139,7 @@ class HxMoveCacheView(View):
             "game": game.get_game_data(),
         }
         return render(request, self.template_name, context=context)
+
 
 class HxMoveCacheUpView(View):
     template_name: str = "cash_register/htmx/hx_game.html"

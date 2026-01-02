@@ -18,6 +18,7 @@ from cash_register.types import (
     GameData,
     LevelHistory,
     Nominal,
+    Page,
     Purchase,
     PurchaseState,
     Screen,
@@ -55,6 +56,7 @@ def init_game(game: Game):
     cart_Item = CartItem(product=product, count=1, amount=product.price)
     cart = Cart(amount=cart_Item.amount, items=[cart_Item])
     data = GameData(
+        page=Page.WELCOME,
         purchase=Purchase(state=PurchaseState.START, cash_state=CashState()),
         buyer=Buyer(number=1, cart=cart, gave_money=100, got_money=0, cash=[]),
         screen=Screen(state=ScreenState.START, product_cost=0, cash_amount=0, change=0),

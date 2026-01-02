@@ -5,6 +5,25 @@ from django.db.models.enums import IntegerChoices, TextChoices
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 
+class Page(TextChoices):
+    WELCOME = "welcome", "Приветствие"
+    CASH_REGISTER = "cash_register", "Касса"
+    NEW_LEVEL = "new_level", "Новый уровень"
+    HISTORY = "history", "История"
+
+    @property
+    def view_name(self) -> str | None:
+        return page_view_map.get(self)
+
+
+page_view_map = {
+    Page.WELCOME: "meet",
+    Page.CASH_REGISTER: "game",
+    Page.NEW_LEVEL: "",
+    Page.HISTORY: "",
+}
+
+
 class Nominal(IntegerChoices):
     TEN = 10
     FIFTY = 50
@@ -212,6 +231,7 @@ class LevelHistory(BaseModel):
 
 
 class GameData(BaseModel):
+    page: Page
     buyer: Buyer
     screen: Screen
     purchase: Purchase
