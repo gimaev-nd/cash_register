@@ -8,20 +8,8 @@ from cash_register.services.game import (
     move_cash,
 )
 from cash_register.types import CashName, GameData, Nominal
-from users.models import Gamer
-from users.services.gamer import get_gamer
 
 pytestmark = pytest.mark.django_db
-
-
-@pytest.fixture
-def gamer() -> Gamer:
-    return get_gamer("Вася")
-
-
-@pytest.fixture
-def game(gamer) -> Game:
-    return get_game(gamer)
 
 
 def test_create_game(gamer):

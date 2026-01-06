@@ -30,4 +30,6 @@ urlpatterns = [
     path("take/", cash_register_views.take_cashe_view, name="take_cashe"),
     path("check/", cash_register_views.check_view, name="check"),
     path("move_cash/", cash_register_views.HxMoveCacheView.as_view(), name="move_cash"),
+    path("new_level/", cash_register_views.HxMoveCacheView.as_view(), name="new_level"),
+    path("history/", cash_register_views.HxMoveCacheView.as_view(), name="history"),
 ]

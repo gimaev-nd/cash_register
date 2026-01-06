@@ -34,6 +34,7 @@ DJANGO_SETTINGS_MODULE = "config.settings"
 extraPaths = [ "src" ]
 reportImplicitOverride = false
 reportUnknownMemberType = false
+reportUnsafeMultipleInheritance = false
 
 [tool.mypy]
 plugins = ["mypy_django_plugin.main"]

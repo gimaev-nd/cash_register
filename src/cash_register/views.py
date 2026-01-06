@@ -30,16 +30,23 @@ class GameMixin(View if TYPE_CHECKING else object):
     def dispatch(
         self, request: HttpRequest, *args: Any, **kwargs: Any
     ) -> HttpResponseBase:
-        print("!" * 8, [*request.META])
         if request.method != "GET":
             return super().dispatch(request, *args, **kwargs)
         page = self.page
-        if "name" not in request.session or "game_id" not in request.session:
+        print("!" * 8, request.session.items())
+        if (
+            "name" not in request.session
+            or not request.session["name"]
+            or "game_id" not in request.session
+        ):
             page = Page.WELCOME
             if page != self.page:
                 return redirect(page.view_name)
+            return super().dispatch(request, *args, **kwargs)
         self.gamer_name = request.session.get("name")
-
+        game = get_game_by_gamer_name(self.gamer_name)
+        game_data = game.get_game_data()
+        page = game_data.page
         if page == self.page:
             return super().dispatch(request, *args, **kwargs)
         return redirect(page.view_name)
@@ -155,3 +162,13 @@ class HxMoveCacheUpView(View):
             "game": game.get_game_data(),
         }
         return render(request, self.template_name, context=context)
+
+
+class NewLevelView(GameMixin, View):
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        return HttpResponse("")
+
+
+class HistoryView(GameMixin, View):
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        return HttpResponse("")

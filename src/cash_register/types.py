@@ -19,8 +19,8 @@ class Page(TextChoices):
 page_view_map = {
     Page.WELCOME: "meet",
     Page.CASH_REGISTER: "game",
-    Page.NEW_LEVEL: "",
-    Page.HISTORY: "",
+    Page.NEW_LEVEL: "new_level",
+    Page.HISTORY: "history",
 }
 
 
