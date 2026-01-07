@@ -172,3 +172,8 @@ class NewLevelView(GameMixin, View):
 class HistoryView(GameMixin, View):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         return HttpResponse("")
+
+
+class ProfileView(GameMixin, View):
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        return HttpResponse("")

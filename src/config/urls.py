@@ -22,14 +22,17 @@ from cash_register import views as cash_register_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # pages
     path("", cash_register_views.Meet.as_view(), name="meet"),
     path("game/", cash_register_views.GameView.as_view(), name="game"),
+    path("new_level/", cash_register_views.NewLevelView.as_view(), name="new_level"),
+    path("history/", cash_register_views.HistoryView.as_view(), name="history"),
+    path("profile/", cash_register_views.ProfileView.as_view(), name="profile"),
+    # htmx
     path("scan/", cash_register_views.scan_products_view, name="scan"),
     path("ask_payment/", cash_register_views.ask_payment_view, name="ask_payment"),
     path("open/", cash_register_views.open_view, name="open"),
     path("take/", cash_register_views.take_cashe_view, name="take_cashe"),
     path("check/", cash_register_views.check_view, name="check"),
     path("move_cash/", cash_register_views.HxMoveCacheView.as_view(), name="move_cash"),
-    path("new_level/", cash_register_views.HxMoveCacheView.as_view(), name="new_level"),
-    path("history/", cash_register_views.HxMoveCacheView.as_view(), name="history"),
 ]
