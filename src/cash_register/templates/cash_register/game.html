@@ -1,3 +1,4 @@
+<div class="profile"> <a href="{% url "profile" %}">Продавец: {{gamer.name}}. Табельный номер {{gamer.code}}</a></div>
 <h1>
     {% if game.level_history.level.index != -1 %} Уровень
     "{{game.level_history.level.name}}"{% endif %}. Покупатель {# ----------- #}

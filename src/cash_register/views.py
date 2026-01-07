@@ -67,9 +67,6 @@ class Meet(GameMixin, TemplateView):
         game_id = request.session.get("game_id")
         if game_id:
             return redirect("game")
-        if True:
-            _ = self.create_game(request, "Наиль")
-            return redirect("game")
         return super().get(request)
 
     def post(self, request: HttpRequest) -> HttpResponse:
@@ -88,7 +85,7 @@ class Meet(GameMixin, TemplateView):
 
 
 @final
-class GameView(TemplateView):
+class GameView(GameMixin, TemplateView):
     template_name = "cash_register/game_page.html"
     game: Game
 
@@ -104,6 +101,7 @@ class GameView(TemplateView):
         return super().get(request)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        kwargs["gamer"] = self.game and self.game.gamer
         kwargs["game"] = self.game.get_game_data()
         return kwargs
 
@@ -117,7 +115,7 @@ class HxGameView(View):
         game = get_game_by_gamer_name(name)
         self.action(game)
         context = {
-            "name": name,
+            "gamer": game and game.gamer,
             "game": game.get_game_data(),
         }
         return render(request, self.template_name, context=context)
@@ -142,7 +140,7 @@ class HxMoveCacheView(View):
         game = get_game_by_gamer_name(name)
         move_cash(game, cash_src, cash_dst, nominal)
         context = {
-            "name": name,
+            "gamer": game and game.gamer,
             "game": game.get_game_data(),
         }
         return render(request, self.template_name, context=context)
@@ -158,22 +156,28 @@ class HxMoveCacheUpView(View):
         game = get_game_by_gamer_name(name)
         move_cash_up(game, cash_src, nominal)
         context = {
-            "name": name,
+            "gamer": game and game.gamer,
             "game": game.get_game_data(),
         }
         return render(request, self.template_name, context=context)
 
 
 class NewLevelView(GameMixin, View):
+    page = Page.NEW_LEVEL
+
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         return HttpResponse("")
 
 
 class HistoryView(GameMixin, View):
+    page = Page.HISTORY
+
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         return HttpResponse("")
 
 
 class ProfileView(GameMixin, View):
+    page = Page.HISTORY
+
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         return HttpResponse("")
