@@ -23,7 +23,7 @@ from cash_register import views as cash_register_views
 urlpatterns = [
     path("admin/", admin.site.urls),
     # pages
-    path("", cash_register_views.Meet.as_view(), name="meet"),
+    path("", cash_register_views.MeetView.as_view(), name="meet"),
     path("game/", cash_register_views.GameView.as_view(), name="game"),
     path("new_level/", cash_register_views.NewLevelView.as_view(), name="new_level"),
     path("history/", cash_register_views.HistoryView.as_view(), name="history"),
