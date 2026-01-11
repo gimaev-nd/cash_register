@@ -32,7 +32,6 @@ class GameMixin(View if TYPE_CHECKING else object):
     ) -> HttpResponseBase:
         if request.method != "GET":
             return super().dispatch(request, *args, **kwargs)
-        page = self.page
         print("!" * 8, request.session.items())
         if (
             "name" not in request.session

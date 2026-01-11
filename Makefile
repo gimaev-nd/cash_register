@@ -34,6 +34,7 @@ cmm: del_db mm
 .PHONY: check
 check:
 	uv run ruff check --fix
+	uv run ruff format
 
 .PHONY: test
 test:
