@@ -36,6 +36,7 @@
 * Django
 * htmx
 * TODO: eventsourcing
+* TODO: pytest-bdd
 
 ## См.также
 * [Заметки о разработке](docs/development.md)
