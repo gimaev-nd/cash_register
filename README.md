@@ -35,6 +35,8 @@
 ## Технологии
 * Django
 * htmx
+* pydantic - планируется убрать
+* TODO: Adaptix
 * TODO: eventsourcing
 * TODO: pytest-bdd
 
