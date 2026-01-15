@@ -59,7 +59,7 @@ class GameMixin(View if TYPE_CHECKING else object):
 
 # Create your views here.
 @final
-class MeetView(GameMixin, TemplateView):
+class LoginView(GameMixin, TemplateView):
     template_name = "cash_register/index.html"
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
