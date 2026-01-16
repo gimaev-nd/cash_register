@@ -23,8 +23,11 @@ jobs:
             - name: Install uv
               uses: astral-sh/setup-uv@v7
 
-            # - name: Set up Python
-            #   run: uv python install
+            - name: Install dependences
+              run: uv sync
+
+            - name: Test
+              run: pytest --cov --cov-report xml
 
             - name: Get version with uv
               id: uv_version
