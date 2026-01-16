@@ -7,6 +7,4 @@ def test_load_products():
 
 def test_get_randon_products():
     assert len(all_products.get_random(10)) == 10
-    assert set(all_products.get_random()[0].model_dump()) == set(
-        ["id", "name", "price"]
-    )
+    assert set(all_products.get_random()[0].model_dump()) == {"id", "name", "price"}

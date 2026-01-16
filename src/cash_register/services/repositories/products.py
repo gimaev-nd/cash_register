@@ -11,9 +11,9 @@ from cash_register.types import Product
 yaml = ruyaml.YAML()
 
 
-@dataclass
 class Products:
-    products: list[Product]
+    def __init__(self, products: list[Product]):
+        self._products: list[Product] = products
 
     def get(self, id: int) -> Product:
         return self.map[id]
@@ -27,17 +27,17 @@ class Products:
             if product_index in product_ids:
                 continue
             product_ids.add(product_index)
-            products.append(self.products[product_index])
+            products.append(self._products[product_index])
         shuffle(products)
         return products
 
     @cached_property
     def count(self):
-        return len(self.products)
+        return len(self._products)
 
     @cached_property
     def map(self) -> dict[int, Product]:
-        return {p.id: p for p in self.products}
+        return {p.id: p for p in self._products}
 
     @classmethod
     def load(cls, products_file: Path | str) -> "Products":

@@ -53,8 +53,8 @@ def get_game_by_gamer_name(name: str) -> Game:
 def init_game(game: Game):
     banknotes = DEFAULT_BANKNOTES.copy()
     product = all_products.get_random(1)[0]
-    cart_Item = CartItem(product=product, count=1, amount=product.price)
-    cart = Cart(amount=cart_Item.amount, items=[cart_Item])
+    cart_item = CartItem(product=product, count=1, amount=product.price)
+    cart = Cart(amount=cart_item.amount, items=[cart_item])
     data = GameData(
         page=Page.WELCOME,
         purchase=Purchase(state=PurchaseState.START, cash_state=CashState()),
