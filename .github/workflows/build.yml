@@ -27,7 +27,7 @@ jobs:
               run: uv sync
 
             - name: Test
-              run: pytest --cov --cov-report xml
+              run: uv run pytest --cov --cov-report xml
 
             - name: Get version with uv
               id: uv_version
